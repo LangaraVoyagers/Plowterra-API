@@ -1,6 +1,8 @@
 import express from "express";
 const router = express.Router();
 
-// TODO: Products endpoints
+const deductionsCtrl = require("../controllers/deduction.controllers");
+
+// TODO: Deductions endpoints
 
 module.exports = router;
