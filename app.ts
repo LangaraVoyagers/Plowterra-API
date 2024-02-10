@@ -8,6 +8,8 @@ import {
 } from 'net';
 import dotenv from 'dotenv'
 
+require('./models/db');
+
 // load environment variables
 dotenv.config();
 
