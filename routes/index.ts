@@ -1,22 +1,23 @@
 import express from "express";
-const router = express.Router();
+import payrollRouter from "./payrolls.routes";
 
-const pickerRouter = require("./pickers.routes");
-router.use(pickerRouter);
+const router = express.Router({ mergeParams: true });
 
-const harvestLogRouter = require("./harvest-logs.routes");
-router.use(harvestLogRouter);
+// const pickerRouter = require("./pickers.routes");
+// router.use(pickerRouter);
 
-const seasonRouter = require("./seasons.routes");
-router.use(seasonRouter);
+// const harvestLogRouter = require("./harvest-logs.routes");
+// router.use(harvestLogRouter);
 
-const productRouter = require("./products.routes");
-router.use(productRouter);
+// const seasonRouter = require("./seasons.routes");
+// router.use(seasonRouter);
 
-const deductionRouter = require("./deductions.routes");
-router.use(deductionRouter);
+// const productRouter = require("./products.routes");
+// router.use(productRouter);
 
-const payrollRouter = require("./payrolls.routes");
+// const deductionRouter = require("./deductions.routes");
+// router.use(deductionRouter);
+
 router.use(payrollRouter);
 
-module.exports = router;
+export default router;
