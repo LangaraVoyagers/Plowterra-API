@@ -8,10 +8,10 @@ import {
 } from 'net';
 import dotenv from 'dotenv'
 
-require('./models/db');
-
 // load environment variables
 dotenv.config();
+
+require('./models/db');
 
 const app: Application = express();
 const port = Number(process.env.PORT) || 8000;
