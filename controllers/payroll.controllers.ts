@@ -14,7 +14,18 @@ function getAll(req: Request, res: Response, next: NextFunction) {
     });
 }
 
-function getById(req: Request, res: Response, next: NextFunction) {}
+function getById(req: Request, res: Response, next: NextFunction) {
+  const id = req.params.id;
+
+  Payroll.findOne({ _id: id })
+    .exec()
+    .then((results) => {
+      res.status(200).json(results);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+}
 
 const payrollController = {
   create,
