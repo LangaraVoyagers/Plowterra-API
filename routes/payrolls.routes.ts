@@ -1,8 +1,9 @@
 import express from "express";
-const router = express.Router();
+import payrollController from "../controllers/payroll.controllers";
+import paths from "../shared/paths";
 
-const payrollCtrl = require("../controllers/payroll.controllers");
+const payrollRouter = express.Router();
 
-// TODO: Payroll endpoints
+payrollRouter.get(paths.payroll, payrollController.getAll);
 
-module.exports = router;
+export default payrollRouter;
