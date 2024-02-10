@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 
 mongoose.set("strictQuery", true);
 
-const dbURI: string =
-  "mongodb+srv://001alfaroso:BPAYmwLjFVkKhyQJ@cluster0.qq6rqzy.mongodb.net/?retryWrites=true&w=majority";
+const dbURI: string ="mongodb+srv://whamester:FxrtXMvpcYqyL4CR@cluster0.jsllulh.mongodb.net/?retryWrites=true&w=majority";
 
 mongoose.connect(dbURI);
 
