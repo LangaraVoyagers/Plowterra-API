@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 mongoose.set("strictQuery", true);
 
-const dbURI: string ="mongodb+srv://whamester:FxrtXMvpcYqyL4CR@cluster0.jsllulh.mongodb.net/?retryWrites=true&w=majority";
+const dbURI: string =
+`mongodb+srv://${process.env.MONGO_UNAME}:${process.env.MONGO_PASS}@cluster0.jsllulh.mongodb.net/?retryWrites=true&w=majority`;
 
 mongoose.connect(dbURI);
 
