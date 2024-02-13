@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 mongoose.set("strictQuery", true);
 
-const dbURI: string =
-`mongodb+srv://${process.env.MONGO_UNAME}:${process.env.MONGO_PASS}@cluster0.jsllulh.mongodb.net/?retryWrites=true&w=majority`;
+require("dotenv").config({ path: ".env.demo" });
+
+const dbURI: string = process.env.CONNECTION_STRING || "";
 
 mongoose.connect(dbURI);
 
