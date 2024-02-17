@@ -5,7 +5,8 @@
   "main": "app.ts",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/app.js",
+    "postbuild": "cp -R node_modules dist/node_modules",
+    "start": "node dist/nodejs/app.js",
     "dev": "nodemon app.ts"
   },
   "keywords": [],
@@ -25,6 +26,7 @@
     "express": "^4.18.2",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
+    "serverless-http": "^3.2.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.0"
   }
