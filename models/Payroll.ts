@@ -8,24 +8,24 @@ const PickerSchema = new Schema<{ name: string }>({
 
 const DetailSchema = new Schema<IPayrollDetail>({
   picker: PickerSchema,
-  collected_amount: { type: Number, required: true },
+  collectedAmount: { type: Number, required: true },
   deductions: { type: Number, required: true },
-  gross_amount: { type: Number, required: true },
-  net_amount: { type: Number, required: true },
-  total_pickers: { type: Number, required: true },
+  grossAmount: { type: Number, required: true },
+  netAmount: { type: Number, required: true },
+  pickersCount: { type: Number, required: true },
 });
 
 const Payroll = model<IPayroll>(
   "Payroll",
   new Schema({
-    start_date: { type: Number, required: true },
-    end_date: { type: Number, required: true },
-    total_pickers: { type: Number, required: true },
+    startDate: { type: Number, required: true },
+    endDate: { type: Number, required: true },
+    pickersCount: { type: Number, required: true },
     totals: {
-      total_paid: { type: Number, required: true },
-      total_collected_amount: { type: Number, required: true },
-      total_gross_amount: { type: Number, required: true },
-      total_deductions: { type: Number, required: true },
+      netAmount: { type: Number, required: true },
+      collectedAmount: { type: Number, required: true },
+      grossAmount: { type: Number, required: true },
+      deductions: { type: Number, required: true },
     },
     details: [DetailSchema],
   })
