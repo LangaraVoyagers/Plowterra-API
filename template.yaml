@@ -14,7 +14,7 @@ Resources:
   ExpressFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/
+      CodeUri: ./
       Handler: app.handler
       Runtime: nodejs20.x
       Architectures:
