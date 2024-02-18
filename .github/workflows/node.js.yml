@@ -26,5 +26,5 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
         aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
     - run: npm ci && npm run build
-    - run: zip -r publish.zip ./dist
+    - run: zip -r publish.zip .
     - run: aws lambda update-function-code --function-name=plowterra-api-ExpressFunction-8wEIZfXytdNu --zip-file=fileb://publish.zip
