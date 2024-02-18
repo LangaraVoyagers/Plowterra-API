@@ -5,7 +5,7 @@
   "main": "app.ts",
   "scripts": {
     "build": "npx tsc",
-    "postbuild": "cp -R node_modules dist/node_modules",
+    "postbuild": "cp -R template.yaml samconfig.toml node_modules dist",
     "start": "node dist/nodejs/app.js",
     "dev": "nodemon app.ts"
   },
