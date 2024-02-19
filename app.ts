@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 import serverless from 'serverless-http';
 import cors from 'cors';
->>>>>>> development
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import express, { Application, Request, Response } from "express";
