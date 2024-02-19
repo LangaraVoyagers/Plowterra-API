@@ -45,23 +45,19 @@ function getById(req: Request, res: Response, next: NextFunction) {
 function remove(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Deduction.updateOne(
+  Deduction.findOneAndUpdate(
     { _id: id },
     {
       deletedAt: new Date().getTime(),
       deletedBy: "",
+    },
+    {
+      returnDocument: "after",
     }
   )
     .exec()
-    .then(() => {
-      Deduction.findOne({ _id: id })
-        .exec()
-        .then((results) => {
-          res.status(200).json(results);
-        })
-        .catch((error) => {
-          res.status(500).json(error);
-        });
+    .then((results) => {
+      res.status(200).json(results);
     })
     .catch((error) => {
       res.status(500).json(error);
