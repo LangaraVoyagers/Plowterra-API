@@ -27,11 +27,11 @@ function getById(req: Request, res: Response, next: NextFunction) {
     });
 }
 
-function close() {} //close season
+function close() {} //Close season
 
-function update() {} //overrride whats on the list
+function update() {} //Overrride whats on the list
 
-function remove() {} //Ff there is a harvest log, cant delete. Enter name to delete
+function remove() {} //If there is a harvest log, cant delete. Enter name to delete
 
 const seasonController = {
   create,
