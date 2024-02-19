@@ -1,5 +1,5 @@
 import express from 'express';
-import { createPicker, getPicker, getAllPickers, updatePicker, softDeletePicker } from '../controllers/pickerController';
+import { createPicker, getPicker, getAllPickers, updatePicker, softDeletePicker } from '../controllers/picker.controllers';
 
 const router = express.Router();
 
