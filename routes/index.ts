@@ -1,5 +1,6 @@
 import express from "express";
 import payrollRouter from "./payrolls.routes";
+import seasonRouter from "./seasons.routes";
 
 const router = express.Router({ mergeParams: true });
 
@@ -9,9 +10,6 @@ const router = express.Router({ mergeParams: true });
 // const harvestLogRouter = require("./harvest-logs.routes");
 // router.use(harvestLogRouter);
 
-// const seasonRouter = require("./seasons.routes");
-// router.use(seasonRouter);
-
 // const productRouter = require("./products.routes");
 // router.use(productRouter);
 
@@ -19,5 +17,6 @@ const router = express.Router({ mergeParams: true });
 // router.use(deductionRouter);
 
 router.use(payrollRouter);
+router.use(seasonRouter);
 
 export default router;

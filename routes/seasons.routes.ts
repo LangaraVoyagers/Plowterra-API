@@ -1,8 +1,14 @@
 import express from "express";
-const router = express.Router();
+import seasonController from "../controllers/seasons.controllers";
+import paths from "../shared/paths";
 
-const seasonCtrl = require("../controllers/seasons.controllers");
+const seasonRouter = express.Router();
 
-// TODO: Season endpoints
+seasonRouter.get(paths.season, seasonController.getAll);
+seasonRouter.get(`${paths.season}/:id`, seasonController.getById);
+seasonRouter.post(paths.season, seasonController.create);
+seasonRouter.put(`${paths.season}/:id`, seasonController.update);
+seasonRouter.delete(`${paths.season}/:id`, seasonController.remove);
+seasonRouter.put(`${paths.season}/:id/close`, seasonController.close);
 
-module.exports = router;
+export default seasonRouter;

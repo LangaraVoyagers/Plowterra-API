@@ -1,12 +1,11 @@
 export interface ISeason {
-    startDate: number;
-    endDate: number;
-    pickersCount: number;
-    totals: {
-      grossAmount: number;
-      collectedAmount: number;
-      deductions: number;
-      netAmount: number; // Calculated value
-    };
-    // details: Array<IPayrollDetail>;
-  }
+  name: string;
+  startDate: number;
+  endDate: number;
+  payroll_timeframe: string; //enum
+  price: number;
+  status: string; //enum
+  //product_id
+  //unit_id
+  //currency_id
+}
