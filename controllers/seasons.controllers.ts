@@ -1,5 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import Season from "../models/Season";
+import { StatusEnum } from "../models/Season";
 
 function create(req: Request, res: Response, next: NextFunction) {
   const season = new Season({
@@ -55,7 +56,7 @@ function getById(req: Request, res: Response, next: NextFunction) {
 function close(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Season.findOneAndUpdate({ _id: id }, { status: "Closed" })
+  Season.findOneAndUpdate({ _id: id }, { status: StatusEnum[1] })
     .exec()
     .then((results) => {
       res.status(200).json(results);

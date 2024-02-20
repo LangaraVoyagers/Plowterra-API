@@ -14,14 +14,14 @@ const SeasonSchema = model<ISeason>(
       type: String,
       enum: PayrollTimeframeEnum,
       required: true,
-      default: "Biweekly",
+      default: PayrollTimeframeEnum[1],
     },
     price: { type: Number, required: true },
     status: {
       type: String,
       enum: StatusEnum,
       required: true,
-      default: "Active",
+      default: StatusEnum[0],
     },
     //productID
     //unitID
@@ -58,3 +58,6 @@ const SeasonSchema = model<ISeason>(
 );
 
 export default SeasonSchema;
+export { PayrollTimeframeEnum, StatusEnum };
+
+
