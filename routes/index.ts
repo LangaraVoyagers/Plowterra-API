@@ -2,6 +2,7 @@ import express from "express";
 import payrollRouter from "./payrolls.routes";
 
 import deductionsRouter from "./deductions.routes";
+import pickersRouter from "./pickers.routes";
 
 const router = express.Router({ mergeParams: true });
 
@@ -22,5 +23,7 @@ const router = express.Router({ mergeParams: true });
 router.use(deductionsRouter);
 
 router.use(payrollRouter);
+
+router.use(pickersRouter);
 
 export default router;
