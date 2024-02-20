@@ -27,14 +27,15 @@ export function getPicker(req: Request, res: Response) {
     });
 };
 
-export const getAllPickers = async (req: Request, res: Response) => {
-    try {
-        const activePickers = await Picker.find({ deletedAt: null });
-        res.json(activePickers);
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-};
+export function getAllPickers(req: Request, res: Response) {
+  Picker.find({ deletedAt: null })
+    .then((activePickers) => {
+      res.json(activePickers);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
+}
 
 export const updatePicker = async (req: Request, res: Response) => {
     try {
