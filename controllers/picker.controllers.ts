@@ -37,16 +37,17 @@ export function getAllPickers(req: Request, res: Response) {
     });
 }
 
-export const updatePicker = async (req: Request, res: Response) => {
-    try {
-        const updatedPicker = await Picker.findByIdAndUpdate(req.params.id, req.body, { new: true });
+export function updatePicker(req: Request, res: Response) {
+    Picker.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      .then((updatedPicker) => {
         if (!updatedPicker) {
-            return res.status(404).json({ error: 'Picker not found' });
+          return res.status(404).json({ error: 'Picker not found' });
         }
         res.json(updatedPicker);
-    } catch (error: any) {
+      })
+      .catch((error) => {
         res.status(500).json({ error: error.message });
-    }
+      });
 };
 
 export const softDeletePicker = async (req: Request, res: Response) => {
