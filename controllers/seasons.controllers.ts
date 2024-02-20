@@ -56,7 +56,7 @@ function getById(req: Request, res: Response, next: NextFunction) {
 function close(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Season.findOneAndUpdate({ _id: id }, { status: StatusEnum[1], endDate: new Date().getTime()})
+  Season.findOneAndUpdate({ _id: id }, { status: StatusEnum[1], endDate: new Date().getTime()}, { new: true })
     .exec()
     .then((results) => {
       res.status(200).json(results);
@@ -69,7 +69,7 @@ function close(req: Request, res: Response, next: NextFunction) {
 function update(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Season.findOneAndUpdate({ _id: id }, req.body)
+  Season.findOneAndUpdate({ _id: id }, req.body, { new: true })
     .exec()
     .then((results) => {
       res.status(200).json(results);
@@ -86,7 +86,7 @@ function remove(req: Request, res: Response, next: NextFunction) {
     .exec()
     .then((season) => {
       if (season) {
-        Season.findOneAndUpdate({ _id: id }, { deletedAt: new Date() })
+        Season.findOneAndUpdate({ _id: id }, { deletedAt: new Date() }, { new: true })
           .exec()
           .then((results) => {
             res.status(200).json(results);
