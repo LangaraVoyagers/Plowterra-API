@@ -1,23 +1,23 @@
 import express from "express";
 import { createPicker, getPicker, getAllPickers, updatePicker, softDeletePicker } from '../controllers/picker.controllers';
+import paths from "../shared/paths";
 
-const router = express.Router();
-
-const pickerCtrl = require("../controllers/picker.controllers");
+const router = express.Router()
 
 // POST: /api/v1/pickers
-router.post('/pickers', createPicker);
+router.post(paths.picker, createPicker);
 
 // GET: /api/v1/pickers
-router.get('/pickers', getAllPickers);
+router.get(paths.picker, getAllPickers);
 
 // GET: /api/v1/pickers/:id
-router.get('/pickers/:id', getPicker);
+router.get('${paths.picker}/:id', getPicker);
 
 // PUT: /api/v1/pickers/:id
-router.put('/pickers/:id', updatePicker);
+router.put('${paths.picker}/:id', updatePicker);
 
 //SOFT DELETE: /api/v1/pickers/:id
-router.patch('/pickers/:id', softDeletePicker);
+router.patch('${paths.picker}/:id', softDeletePicker);
 
-module.exports = router;
+// module.exports = router;
+export default router;
