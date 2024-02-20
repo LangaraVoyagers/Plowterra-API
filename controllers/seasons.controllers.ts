@@ -30,7 +30,7 @@ function create(req: Request, res: Response, next: NextFunction) {
 
 function getAll(req: Request, res: Response, next: NextFunction) {
   Season.find({ deletedAt: null })
-    .select("name status startDate")
+    .select("name status startDate endDate")
     .exec()
     .then((results) => {
       res.status(200).json(results);
