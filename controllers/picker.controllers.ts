@@ -14,16 +14,17 @@ export function createPicker(req: Request, res: Response) {
       });
   }
 
-export const getPicker = async (req: Request, res: Response) => {
-    try {
-        const picker = await Picker.findById(req.params.id);
-        if (!picker) {
-            return res.status(404).json({ error: 'Picker not found' });
-        }
-        res.json(picker);
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
+export function getPicker(req: Request, res: Response) {
+  Picker.findById(req.params.id)
+    .then((picker) => {
+      if (!picker) {
+        return res.status(404).json({ error: 'Picker not found' });
+      }
+      res.json(picker);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
 };
 
 export const getAllPickers = async (req: Request, res: Response) => {
