@@ -6,9 +6,9 @@ function create(req: Request, res: Response, next: NextFunction) {
     name: req.body.name,
     startDate: req.body.startDate,
     endDate: req.body.endDate, //Think this should be calculated when status is changed to close
-    payroll_timeframe: req.body.payroll_timeframe,
+    payrollTimeframe: req.body.payrollTimeframe,
     price: req.body.price,
-    // TODO: Add product_id, unit_id, currency_id
+    // TODO: Add productID, unitID, currencyID
   });
 
   season
@@ -81,7 +81,7 @@ function update(req: Request, res: Response, next: NextFunction) {
 function remove(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Season.findOne({ _id: id, has_harvest_log: false })
+  Season.findOne({ _id: id, hasHarvestLog: false })
     .exec()
     .then((season) => {
       if (season) {

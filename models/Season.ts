@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import { ISeason } from "../interfaces/season.interface";
 
 const PayrollTimeframeEnum = ["Weekly", "Biweekly", "Monthly"];
+const StatusEnum = ["Active", "Closed"];
 
 const SeasonSchema = model<ISeason>(
   "Season",
@@ -9,17 +10,23 @@ const SeasonSchema = model<ISeason>(
     name: { type: String, required: true },
     startDate: { type: Number, required: true },
     endDate: { type: Number, required: true },
-    payroll_timeframe: {
+    payrollTimeframe: {
       type: String,
       enum: PayrollTimeframeEnum,
       required: true,
+      default: "Biweekly",
     },
     price: { type: Number, required: true },
-    status: { type: String, required: true, default: "Active" },
-    //product_id
-    //unit_id
-    //currency_id
-    has_harvest_log: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: StatusEnum,
+      required: true,
+      default: "Active",
+    },
+    //productID
+    //unitID
+    //currencyID
+    hasHarvestLog: { type: Boolean, default: false },
     createdAt: {
       type: Number,
       default: new Date().getTime(),
