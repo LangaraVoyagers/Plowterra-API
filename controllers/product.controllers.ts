@@ -46,15 +46,16 @@ export function updateProduct(req: Request, res: Response) {
     });
 }
 
-export const softDeleteProduct = async (req: Request, res: Response) => {
-  try {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      { deletedAt: Date.now(), deletedBy: "" },
-      { returnDocument: "after" }
-    );
-    res.json(updatedProduct);
-  } catch (error: any) {
-    res.status(500).json(error);
-  }
-};
+export function softDeleteProduct(req: Request, res: Response) {
+  Product.findByIdAndUpdate(
+    req.params.id,
+    { deletedAt: Date.now(), deletedBy: "" },
+    { returnDocument: "after" }
+  )
+    .then((updatedProduct) => {
+      res.json(updatedProduct);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+}
