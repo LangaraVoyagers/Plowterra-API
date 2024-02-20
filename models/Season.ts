@@ -9,7 +9,7 @@ const SeasonSchema = model<ISeason>(
   new Schema({
     name: { type: String, required: true },
     startDate: { type: Number, required: true },
-    endDate: { type: Number, required: true },
+    endDate: { type: Number, required: false },
     payrollTimeframe: {
       type: String,
       enum: PayrollTimeframeEnum,

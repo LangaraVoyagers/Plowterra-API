@@ -6,7 +6,7 @@ function create(req: Request, res: Response, next: NextFunction) {
   const season = new Season({
     name: req.body.name,
     startDate: req.body.startDate,
-    endDate: req.body.endDate, //Think this should be calculated when status is changed to close
+    endDate: req.body.endDate, 
     payrollTimeframe: req.body.payrollTimeframe,
     price: req.body.price,
     // TODO: Add productID, unitID, currencyID
@@ -56,7 +56,7 @@ function getById(req: Request, res: Response, next: NextFunction) {
 function close(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Season.findOneAndUpdate({ _id: id }, { status: StatusEnum[1] })
+  Season.findOneAndUpdate({ _id: id }, { status: StatusEnum[1], endDate: new Date().getTime()})
     .exec()
     .then((results) => {
       res.status(200).json(results);
