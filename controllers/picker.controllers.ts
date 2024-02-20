@@ -1,16 +1,18 @@
 import { Request, Response } from 'express';
 import Picker, { IPicker } from '../models/Picker';
 
-export const createPicker = async (req: Request, res: Response) => {
-    try {
-        const pickerData: IPicker = req.body;
-        const picker = new Picker(pickerData);
-        await picker.save();
-        res.status(201).json(picker);
-    } catch (error: any) {
+export function createPicker(req: Request, res: Response) {
+    const pickerData: IPicker = req.body;
+    const picker = new Picker(pickerData);
+  
+    picker.save()
+      .then((createdPicker) => {
+        res.status(201).json(createdPicker);
+      })
+      .catch((error) => {
         res.status(500).json({ error: error.message });
-    }
-};
+      });
+  }
 
 export const getPicker = async (req: Request, res: Response) => {
     try {
