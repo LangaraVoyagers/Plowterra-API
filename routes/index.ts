@@ -1,7 +1,8 @@
 import express from "express";
-import payrollRouter from "./payrolls.routes";
 
+import payrollRouter from "./payrolls.routes";
 import deductionsRouter from "./deductions.routes";
+import productsRouter from "./products.routes";
 
 const router = express.Router({ mergeParams: true });
 
@@ -14,13 +15,10 @@ const router = express.Router({ mergeParams: true });
 // const seasonRouter = require("./seasons.routes");
 // router.use(seasonRouter);
 
-// const productRouter = require("./products.routes");
-// router.use(productRouter);
-
 // const deductionRouter = require("./deductions.routes");
 // router.use(deductionRouter);
-router.use(deductionsRouter);
-
 router.use(payrollRouter);
+router.use(deductionsRouter);
+router.use(productsRouter);
 
 export default router;

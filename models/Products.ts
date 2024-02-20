@@ -1,21 +1,41 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from "mongoose";
+import { IAudit } from "../interfaces/shared.interface";
 
-export interface IProduct extends Document {
-    name: string;
-    createdBy: string;
-    createdAt: Date;
-    deletedBy: string;
-    deletedAt: Date;
+export interface IProduct extends IAudit {
+  name: string;
 }
 
 const ProductSchema: Schema = new Schema({
-    name: { type: String, required: true, maxlength: 40 },
-    createdBy: { type: String, required: true, maxlength: 40 },
-    createdAt: { type: Date, required: true, default: Date.now },
-    deletedBy: { type: String, required: false, maxlength: 40 },
-    deletedAt: { type: Date, required: false, default: null }
+  name: { type: String, required: true, maxlength: 40 },
+  createdAt: {
+    type: Number,
+    default: new Date().getTime(),
+  },
+  createdBy: {
+    //createdBy -> from the token
+    type: String,
+    default: "",
+  },
+  updatedAt: {
+    type: Number,
+    default: null,
+  },
+  updatedBy: {
+    //updatedBy -> from the token
+    type: String,
+    default: null,
+  },
+  deletedAt: {
+    type: Number,
+    default: null,
+  },
+  deletedBy: {
+    //updatedBy -> from the token
+    type: String,
+    default: null,
+  },
 });
 
-const Product = mongoose.model<IProduct>('Product', ProductSchema);
+const Product = mongoose.model<IProduct>("Product", ProductSchema);
 
 export default Product;
