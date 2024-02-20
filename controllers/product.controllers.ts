@@ -2,16 +2,18 @@ import { Request, Response } from 'express';
 import Product, { IProduct } from '../models/Products';
 import getContentLocation from "../shared/get-content-location";
 
-export const createProduct = async (req: Request, res: Response) => {
-  try {
-    const productData: IProduct = req.body;
-    const product = new Product(productData);
-    await product.save();
-    const url = getContentLocation(req, product._id);
-    res.set("content-location", url).status(201).json(product);
-  } catch (error: any) {
-    res.status(500).json(error);
-  }
+export const createProduct = (req: Request, res: Response) => {
+  const productData: IProduct = req.body;
+  const product = new Product(productData);
+
+  product.save()
+    .then((product) => {
+      const url = getContentLocation(req, product._id);
+      res.set("content-location", url).status(201).json(product);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 };
 
 export const getProduct = async (req: Request, res: Response) => {
