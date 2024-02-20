@@ -26,13 +26,14 @@ export function getProduct(req: Request, res: Response) {
     });
 }
 
-export const getAllProducts = async (req: Request, res: Response) => {
-  try {
-    const activeProducts = await Product.find({ deletedAt: null });
-    res.json(activeProducts);
-  } catch (error: any) {
-    res.status(500).json(error);
-  }
+export function getAllProducts(req: Request, res: Response) {
+  Product.find({ deletedAt: null })
+    .then((activeProducts) => {
+      res.json(activeProducts);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
