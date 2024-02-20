@@ -1,8 +1,15 @@
 import express from "express";
+import deductionController from "../controllers/deduction.controllers";
+import paths from "../shared/paths";
+
 const router = express.Router();
 
-const deductionsCtrl = require("../controllers/deduction.controllers");
+router.get(paths.deduction, deductionController.getAll);
 
-// TODO: Deductions endpoints
+router.get(`${paths.deduction}/:id`, deductionController.getById);
 
-module.exports = router;
+router.post(paths.deduction, deductionController.create);
+
+router.delete(`${paths.deduction}/:id`, deductionController.remove);
+
+export default router;
