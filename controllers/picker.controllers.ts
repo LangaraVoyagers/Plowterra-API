@@ -50,14 +50,15 @@ export function updatePicker(req: Request, res: Response) {
       });
 };
 
-export const softDeletePicker = async (req: Request, res: Response) => {
-    try {
-        const updatedPicker = await Picker.findByIdAndUpdate(req.params.id, { deletedAt: Date.now() });
-        if (!updatedPicker) {
-            return res.status(404).json({ error: 'Picker not found' });
-        }
-        res.json({ message: 'Picker deleted successfully' });
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-}
+export function softDeletePicker(req: Request, res: Response) {
+  Picker.findByIdAndUpdate(req.params.id, { deletedAt: Date.now() })
+    .then((updatedPicker) => {
+      if (!updatedPicker) {
+        return res.status(404).json({ error: 'Picker not found' });
+      }
+      res.json({ message: 'Picker deleted successfully' });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
+};
