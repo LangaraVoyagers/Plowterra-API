@@ -6,7 +6,7 @@ function create(req: Request, res: Response, next: NextFunction) {
   const season = new Season({
     name: req.body.name,
     startDate: req.body.startDate,
-    endDate: req.body.endDate, 
+    endDate: req.body.endDate,
     payrollTimeframe: req.body.payrollTimeframe,
     price: req.body.price,
     // TODO: Add productID, unitID, currencyID
@@ -56,7 +56,11 @@ function getById(req: Request, res: Response, next: NextFunction) {
 function close(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Season.findOneAndUpdate({ _id: id }, { status: StatusEnum[1], endDate: new Date().getTime()}, { new: true })
+  Season.findOneAndUpdate(
+    { _id: id },
+    { status: StatusEnum[1], endDate: new Date().getTime() },
+    { new: true }
+  )
     .exec()
     .then((results) => {
       res.status(200).json(results);
@@ -86,7 +90,11 @@ function remove(req: Request, res: Response, next: NextFunction) {
     .exec()
     .then((season) => {
       if (season) {
-        Season.findOneAndUpdate({ _id: id }, { deletedAt: new Date() }, { new: true })
+        Season.findOneAndUpdate(
+          { _id: id },
+          { deletedAt: new Date().getTime() },
+          { new: true }
+        )
           .exec()
           .then((results) => {
             res.status(200).json(results);
