@@ -16,14 +16,15 @@ export const createProduct = (req: Request, res: Response) => {
     });
 };
 
-export const getProduct = async (req: Request, res: Response) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    res.json(product);
-  } catch (error: any) {
-    res.status(500).json(error);
-  }
-};
+export function getProduct(req: Request, res: Response) {
+  Product.findById(req.params.id)
+    .then((product) => {
+      res.json(product);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+}
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
