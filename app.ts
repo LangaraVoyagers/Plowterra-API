@@ -1,23 +1,32 @@
-import express, { Request, Response, Application } from 'express';
-import { AddressInfo } from 'net';
-import dotenv from 'dotenv';
-import productRouter from './routes/products.routes'; 
+import serverless from 'serverless-http';
+import cors from 'cors';
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import express, { Application, Request, Response } from "express";
+import { AddressInfo } from "net";
+import connect from "./models/db";
+import router from "./routes";
 
 dotenv.config();
 
 require('./models/db');
 
 const app: Application = express();
-app.use(express.json());
+app.use(cors());
 const port = Number(process.env.PORT) || 8000;
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/api/v1", router);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hi we are team Voyagers');
+app.get('/hello', (req: Request, res: Response) => {
+  res.json({"message": "Hi from team Voyagers"});
 });
-
-app.use('/api/v1', productRouter);
 
 const listener = app.listen(port, () => {
   const { port } = listener.address() as AddressInfo;
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
+
+connect(process.env.CONNECTION_STRING ?? "");
+
+export const handler = serverless(app);
