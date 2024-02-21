@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import Season from "../models/Season";
 import { StatusEnum } from "../models/Season";
+import getContentLocation from "../shared/get-content-location";
 
 function create(req: Request, res: Response, next: NextFunction) {
   const season = new Season({
@@ -14,10 +15,12 @@ function create(req: Request, res: Response, next: NextFunction) {
 
   season
     .save()
-    .then((result) => {
-      res.status(201).json({
+    .then((results) => {
+      const url = getContentLocation(req, results._id);
+
+      res.set("content-location", url).status(201).json({
         message: "Season created",
-        data: result,
+        data: results,
         error: null,
       });
     })
@@ -112,13 +115,11 @@ function remove(req: Request, res: Response, next: NextFunction) {
     .exec()
     .then((results) => {
       if (!results) {
-        return res
-          .status(404)
-          .json({
-            message: "Can't delete a Season that has a harvest log.",
-            data: null,
-            error: null,
-          });
+        return res.status(404).json({
+          message: "Can't delete a Season that has a harvest log.",
+          data: null,
+          error: null,
+        });
       } else {
         res.status(200).json({
           message: "Season deleted",
