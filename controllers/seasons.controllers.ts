@@ -58,7 +58,7 @@ function close(req: Request, res: Response, next: NextFunction) {
 
   Season.findOneAndUpdate(
     { _id: id },
-    { status: StatusEnum[1], endDate: new Date().getTime() },
+    { status: StatusEnum.CLOSED, endDate: new Date().getTime() },
     { new: true }
   )
     .exec()

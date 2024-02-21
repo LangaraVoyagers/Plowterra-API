@@ -1,14 +1,15 @@
 import { IAudit } from "./shared.iterface";
+import { PayrollTimeframeEnum, StatusEnum } from "../models/Season";
 
 export interface ISeason extends IAudit {
   name: string;
   startDate: number;
   endDate: number;
-  payrollTimeframe: string; //enum
+  payrollTimeframe: `${PayrollTimeframeEnum}`;
   price: number;
-  status: string; //enum
+  status: `${StatusEnum}`;
   hasHarvestLog: boolean;
   //productID
   //unitID
-  //currencyID
+  //currencyID
 }

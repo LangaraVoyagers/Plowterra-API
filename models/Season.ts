@@ -1,8 +1,12 @@
 import { Schema, model } from "mongoose";
 import { ISeason } from "../interfaces/season.interface";
 
-const PayrollTimeframeEnum = ["Weekly", "Biweekly", "Monthly"];
-const StatusEnum = ["Active", "Closed"];
+enum PayrollTimeframeEnum  {
+  WEEKLY= "Weekly",
+  BIWEEKLY= "Bi-Weekly",
+  MONTHLY="Monthly",
+};
+enum StatusEnum  { ACTIVE= "Active", CLOSED= "Closed" };
 
 const SeasonSchema = model<ISeason>(
   "Season",
@@ -14,14 +18,14 @@ const SeasonSchema = model<ISeason>(
       type: String,
       enum: PayrollTimeframeEnum,
       required: true,
-      default: PayrollTimeframeEnum[1],
+      default: PayrollTimeframeEnum.BIWEEKLY,
     },
     price: { type: Number, required: true },
     status: {
       type: String,
       enum: StatusEnum,
       required: true,
-      default: StatusEnum[0],
+      default: StatusEnum.ACTIVE,
     },
     //productID
     //unitID
@@ -59,5 +63,3 @@ const SeasonSchema = model<ISeason>(
 
 export default SeasonSchema;
 export { PayrollTimeframeEnum, StatusEnum };
-
-
