@@ -11,13 +11,13 @@ router.post(paths.picker, createPicker);
 router.get(paths.picker, getAllPickers);
 
 // GET: /api/v1/pickers/:id
-router.get('${paths.picker}/:id', getPicker);
+router.get(`${paths.picker}/:id`, getPicker);
 
 // PUT: /api/v1/pickers/:id
-router.put('${paths.picker}/:id', updatePicker);
+router.put(`${paths.picker}/:id`, updatePicker);
 
 //SOFT DELETE: /api/v1/pickers/:id
-router.patch('${paths.picker}/:id', softDeletePicker);
+router.patch(`${paths.picker}/:id`, softDeletePicker);
 
 // module.exports = router;
 export default router;
