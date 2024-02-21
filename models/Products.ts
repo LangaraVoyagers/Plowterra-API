@@ -15,25 +15,7 @@ const ProductSchema: Schema = new Schema({
     //createdBy -> from the token
     type: String,
     default: "",
-  },
-  updatedAt: {
-    type: Number,
-    default: null,
-  },
-  updatedBy: {
-    //updatedBy -> from the token
-    type: String,
-    default: null,
-  },
-  deletedAt: {
-    type: Number,
-    default: null,
-  },
-  deletedBy: {
-    //updatedBy -> from the token
-    type: String,
-    default: null,
-  },
+  }
 });
 
 const Product = mongoose.model<IProduct>("Product", ProductSchema);
