@@ -10,7 +10,7 @@ export function createPicker(req: Request, res: Response) {
         res.status(201).json(createdPicker);
       })
       .catch((error) => {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error });
       });
   }
 
@@ -23,7 +23,7 @@ export function getPicker(req: Request, res: Response) {
       res.json(picker);
     })
     .catch((error) => {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error });
     });
 };
 
@@ -33,7 +33,7 @@ export function getAllPickers(req: Request, res: Response) {
       res.json(activePickers);
     })
     .catch((error) => {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error });
     });
 }
 
@@ -46,7 +46,7 @@ export function updatePicker(req: Request, res: Response) {
         res.json(updatedPicker);
       })
       .catch((error) => {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error });
       });
 };
 
@@ -59,6 +59,6 @@ export function softDeletePicker(req: Request, res: Response) {
       res.json({ message: 'Picker deleted successfully' });
     })
     .catch((error) => {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error });
     });
 };
