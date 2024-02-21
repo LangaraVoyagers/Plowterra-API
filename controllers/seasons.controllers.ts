@@ -17,12 +17,14 @@ function create(req: Request, res: Response, next: NextFunction) {
     .then((result) => {
       res.status(201).json({
         message: "Season created",
-        result,
+        data: result,
+        error: null,
       });
     })
     .catch((error) => {
       res.status(500).json({
         message: "Season not created",
+        data: null,
         error,
       });
     });
@@ -63,10 +65,18 @@ function close(req: Request, res: Response, next: NextFunction) {
   )
     .exec()
     .then((results) => {
-      res.status(200).json(results);
+      res.status(200).json({
+        message: "Season closed",
+        data: results,
+        error: null,
+      });
     })
     .catch((error) => {
-      res.status(500).json(error);
+      res.status(500).json({
+        message: "Error closing season",
+        data: null,
+        error,
+      });
     });
 }
 
@@ -76,10 +86,18 @@ function update(req: Request, res: Response, next: NextFunction) {
   Season.findOneAndUpdate({ _id: id }, req.body, { new: true })
     .exec()
     .then((results) => {
-      res.status(200).json(results);
+      res.status(200).json({
+        message: "Season updated",
+        data: results,
+        error: null,
+      });
     })
     .catch((error) => {
-      res.status(500).json(error);
+      res.status(500).json({
+        message: "Error updating season",
+        data: null,
+        error,
+      });
     });
 }
 
@@ -96,13 +114,25 @@ function remove(req: Request, res: Response, next: NextFunction) {
       if (!results) {
         return res
           .status(404)
-          .json({ message: "Can't delete a Season that has a harvest log." });
+          .json({
+            message: "Can't delete a Season that has a harvest log.",
+            data: null,
+            error: null,
+          });
       } else {
-        res.status(200).json(results);
+        res.status(200).json({
+          message: "Season deleted",
+          data: results,
+          error: null,
+        });
       }
     })
     .catch((error) => {
-      res.status(500).json(error);
+      res.status(500).json({
+        message: "Error deleting season",
+        data: null,
+        error,
+      });
     });
 }
 
