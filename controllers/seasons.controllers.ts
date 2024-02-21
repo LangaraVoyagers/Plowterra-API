@@ -86,26 +86,19 @@ function update(req: Request, res: Response, next: NextFunction) {
 function remove(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
-  Season.findOne({ _id: id, hasHarvestLog: false })
+  Season.findOneAndUpdate(
+    { _id: id, hasHarvestLog: false },
+    { deletedAt: new Date().getTime() },
+    { new: true }
+  )
     .exec()
-    .then((season) => {
-      if (season) {
-        Season.findOneAndUpdate(
-          { _id: id },
-          { deletedAt: new Date().getTime() },
-          { new: true }
-        )
-          .exec()
-          .then((results) => {
-            res.status(200).json(results);
-          })
-          .catch((error) => {
-            res.status(500).json(error);
-          });
+    .then((results) => {
+      if (!results) {
+        return res
+          .status(404)
+          .json({ message: "Can't delete a Season that has a harvest log." });
       } else {
-        res
-          .status(400)
-          .json({ message: "Cannot delete season with harvest log" });
+        res.status(200).json(results);
       }
     })
     .catch((error) => {
