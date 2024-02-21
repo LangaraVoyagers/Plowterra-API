@@ -15,10 +15,6 @@ export interface IPicker extends Document {
     createdAt: Date;
     employmentStartDate: Date;
     employmentEndDate: Date;
-    updatedBy: string;
-    updatedAt: Date;
-    deletedBy: string;
-    deletedAt: Date;
 }
 
 const PickerSchema: Schema = new Schema({
@@ -36,10 +32,6 @@ const PickerSchema: Schema = new Schema({
     createdAt: { type: Date, required: true, default: Date.now },
     employmentStartDate: { type: Date, required: true, default: Date.now },
     employmentEndDate: { type: Date, required: true, default: Date.now },
-    updatedBy: { type: String, required: false, maxlength: 40 },
-    updatedAt: { type: Date, required: false, default: null },
-    deletedBy: { type: String, required: false, maxlength: 40 },
-    deletedAt: { type: Date, required: false, default: null }
 });
 
 const Picker = mongoose.model<IPicker>('Picker', PickerSchema);
