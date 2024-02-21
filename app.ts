@@ -7,9 +7,8 @@ import { AddressInfo } from "net";
 import connect from "./models/db";
 import router from "./routes";
 
+// load environment variables
 dotenv.config();
-
-require('./models/db');
 
 const app: Application = express();
 app.use(cors());
