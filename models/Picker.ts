@@ -27,14 +27,14 @@ const PickerSchema: Schema = new Schema({
         phoneNumber: { type: String, required: true, maxlength: 15 },
         relationToPicker: { type: String, required: true, maxlength: 10 }
     },
-    govId: { type: String, required: true, maxlength: 20 },
-    address: { type: String, required: true, maxlength: 50 },
-    bloodType: { type: String, required: true, maxlength: 5 },
-    status: { type: Boolean, required: true, default: true },
-    score: { type: Number, required: true, default: 0 },
+    govId: { type: String, maxlength: 20 },
+    address: { type: String, maxlength: 50 },
+    bloodType: { type: String, maxlength: 5 },
+    status: { type: Boolean, default: true },
+    score: { type: Number, default: 0 },
     employment: {
-        startDate: { type: Date, required: true, default: Date.now },
-        endDate: { type: Date, required: true, default: Date.now }
+        startDate: { type: Number, default: Date.now },
+        endDate: { type: Number }
     }
 });
 
