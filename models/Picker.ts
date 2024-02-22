@@ -1,6 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IPicker extends Document {
+export interface IPicker {
     name: string;
     phoneNumber: string;
     emergencyPhoneNumber: string;
