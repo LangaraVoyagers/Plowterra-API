@@ -11,7 +11,6 @@ export interface IPicker {
     govId: string;
     address: string;
     bloodType: string;
-    status: boolean;
     score: number;
     employment: {
         startDate: Date;
@@ -30,7 +29,6 @@ const PickerSchema: Schema = new Schema({
     govId: { type: String, maxlength: 20 },
     address: { type: String, maxlength: 50 },
     bloodType: { type: String, maxlength: 5 },
-    status: { type: Boolean, default: true },
     score: { type: Number, default: 0 },
     employment: {
         startDate: { type: Number, default: Date.now },
