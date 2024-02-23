@@ -1,4 +1,5 @@
-import { NextFunction, Response, Request } from "express";
+import { NextFunction, Request, Response } from "express";
+
 import Season from "../models/Season";
 import { StatusEnum } from "../models/Season";
 import getContentLocation from "../shared/get-content-location";

@@ -1,8 +1,8 @@
+import authenticationRouter from "./authentication.routes";
+import deductionsRouter from "./deductions.routes";
 import express from "express";
 import payrollRouter from "./payrolls.routes";
 import seasonRouter from "./seasons.routes";
-
-import deductionsRouter from "./deductions.routes";
 
 const router = express.Router({ mergeParams: true });
 
@@ -17,6 +17,7 @@ const router = express.Router({ mergeParams: true });
 
 // const deductionRouter = require("./deductions.routes");
 // router.use(deductionRouter);
+router.use(authenticationRouter)
 router.use(deductionsRouter);
 
 router.use(payrollRouter);
