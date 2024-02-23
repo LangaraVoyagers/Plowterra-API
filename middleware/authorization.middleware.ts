@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
+import User from '../models/User';
 import userMessage from '../messages/user.messages';
 import {
   verifyToken
@@ -19,6 +20,7 @@ async function authUser (req: Request, res: Response, next: NextFunction) {
     // verify the token
     const verificationData = verifyToken(authorization ?? "");
     // if error return
+
     if (verificationData?.error) {
       res.status(401).json({
         message: verificationData.message,
@@ -28,6 +30,26 @@ async function authUser (req: Request, res: Response, next: NextFunction) {
 
       return;
     }
+
+    const { data } = verificationData;
+    // get user info
+    const user = await User.findById(data?.id).exec();
+    
+    // token in DB doesn't match with current token
+    if (!(user?.token === authorization)) {
+      res.status(401).json({
+        message: userMessage.USER_JWT_INVALID,
+        data: null,
+        error: true
+      });
+
+      return;
+    }
+
+    // store user info
+    res.locals = {
+      user: data
+    };
 
     // pass control if valid token
     next();

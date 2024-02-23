@@ -13,7 +13,9 @@ const userMessage = {
   USER_JWT_REFRESH_ERROR: "Refresh unsuccessful, please try again later",
   USER_JWT_EXPIRED: "Authorization token expired",
   USER_JWT_INVALID: "Invalid Authorization token passed",
-  USER_AUTH_ERROR: "Authorization error, please try again later"
+  USER_AUTH_ERROR: "Authorization error, please try again later",
+  USER_LOGOUT_SUCCESS: "Logged out successfully",
+  USER_LOGOUT_ERROR: "Logout unsuccessful, please try again later"
 };
 
 export default userMessage;

@@ -158,6 +158,34 @@ async function signIn (req: Request, res: Response) {
   }
 }
 
+// logout the user
+async function logOut (req: Request, res: Response) {
+  try {
+    const { user } = res.locals;
+    // unset the token
+    const userUpdated = await User.findByIdAndUpdate(
+      user?.id, 
+      { token: null },
+      { returnDocument: 'after' }
+      ).exec();
+
+    res.status(200).json({
+      message: userMessage.USER_LOGOUT_SUCCESS,
+      data: { token: userUpdated?.token },
+      error: false
+    })
+    
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: userMessage.USER_LOGOUT_ERROR,
+      data: null,
+      error: true
+    });
+  }
+}
+
 // refresh the token
 async function refreshToken (req: Request, res: Response) {
   try {
@@ -225,8 +253,9 @@ async function refreshToken (req: Request, res: Response) {
 }
 
 const authenticationController = {
-  signUp,
   signIn,
+  signUp,
+  logOut,
   refreshToken
 };
 

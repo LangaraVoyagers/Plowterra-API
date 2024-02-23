@@ -10,6 +10,9 @@ authenticationRouter.post("/auth/signin", authenticationController.signIn);
 authenticationRouter.post("/auth/signup", authenticationController.signUp);
 
 // GET: /api/v1/auth/refresh
-authenticationRouter.post("/auth/refresh", authenticationController.refreshToken);
+authenticationRouter.get("/auth/refresh", authenticationController.refreshToken);
+
+// GET: /api/v1/logout
+authenticationRouter.get("/logout", authenticationController.logOut);
 
 export default authenticationRouter;
