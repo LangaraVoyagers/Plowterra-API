@@ -7,10 +7,18 @@ export function createPicker(req: Request, res: Response) {
   
     picker.save()
       .then((createdPicker) => {
-        res.status(201).json(createdPicker);
+        res.status(201).json({
+          message: 'Picker created successfully',
+          data: createdPicker,
+          error: null,
+        });
       })
       .catch((error) => {
-        res.status(500).json({ error });
+              res.status(500).json({
+          message: 'Error creating picker',
+          data: null,
+          error,
+        });
       });
   }
 
