@@ -64,9 +64,16 @@ export function softDeletePicker(req: Request, res: Response) {
       if (!updatedPicker) {
         return res.status(404).json({ error: 'Picker not found' });
       }
-      res.json({ message: 'Picker deleted successfully' });
+      res.status(200).json({
+        message: 'Picker deleted successfully',
+        data: updatedPicker ,
+        error: null,
+      });
     })
     .catch((error) => {
-      res.status(500).json({ error });
+      res.status(500).json({
+        message: 'Error deleting picker' ,
+        data: null,
+        error,});
     });
 };
