@@ -43,12 +43,20 @@ export function updatePicker(req: Request, res: Response) {
         if (!updatedPicker) {
           return res.status(404).json({ error: 'Picker not found' });
         }
-        res.json(updatedPicker);
+        res.status(200).json({
+          message: "Picker updated",
+          data: updatedPicker,
+          error: null,
+        });
       })
       .catch((error) => {
-        res.status(500).json({ error });
+        res.status(500).json({
+          message: "Error updating picker",
+          data: null,
+          error,
+        });
       });
-};
+  };
 
 export function softDeletePicker(req: Request, res: Response) {
   Picker.findByIdAndUpdate(req.params.id, { deletedAt: Date.now() })
