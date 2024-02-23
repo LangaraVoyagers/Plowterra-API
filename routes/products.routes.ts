@@ -1,8 +1,22 @@
-import express from "express";
+import express from 'express';
+import { createProduct, getProduct, getAllProducts, updateProduct, softDeleteProduct } from '../controllers/product.controllers';
+import paths from '../shared/paths';
+
 const router = express.Router();
 
-const productCtrl = require("../controllers/product.controllers");
+// POST: /api/v1/products
+router.post(paths.products, createProduct);
 
-// TODO: Product endpoints
+// GET: /api/v1/products
+router.get(paths.products, getAllProducts);
 
-module.exports = router;
+// GET: /api/v1/products/:id
+router.get( `${paths.products}/:id`, getProduct);
+
+// PUT: /api/v1/products/:id
+router.put(`${paths.products}/:id`, updateProduct);
+
+// SOFT DELETE: /api/v1/products/:id
+router.delete(`${paths.products}/:id`, softDeleteProduct);
+
+export default router;

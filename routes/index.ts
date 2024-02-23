@@ -1,29 +1,17 @@
 import express from "express";
-import payrollRouter from "./payrolls.routes";
 
+import payrollRouter from "./payrolls.routes";
+import seasonRouter from "./seasons.routes";
 import deductionsRouter from "./deductions.routes";
+import productsRouter from "./products.routes";
 import pickersRouter from "./pickers.routes";
 
 const router = express.Router({ mergeParams: true });
 
-// const pickerRouter = require("./pickers.routes");
-// router.use(pickerRouter);
-
-// const harvestLogRouter = require("./harvest-logs.routes");
-// router.use(harvestLogRouter);
-
-// const seasonRouter = require("./seasons.routes");
-// router.use(seasonRouter);
-
-// const productRouter = require("./products.routes");
-// router.use(productRouter);
-
-// const deductionRouter = require("./deductions.routes");
-// router.use(deductionRouter);
-router.use(deductionsRouter);
-
 router.use(payrollRouter);
-
+router.use(seasonRouter);
+router.use(deductionsRouter);
+router.use(productsRouter);
 router.use(pickersRouter);
 
 export default router;

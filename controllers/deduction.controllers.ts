@@ -1,5 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import Deduction from "../models/Deduction";
+import getContentLocation from "../shared/get-content-location";
 
 function create(req: Request, res: Response, next: NextFunction) {
   const deduction = new Deduction({
@@ -9,7 +10,7 @@ function create(req: Request, res: Response, next: NextFunction) {
   deduction
     .save()
     .then((results) => {
-      const url = `${req.originalUrl}/${results._id}`;
+      const url = getContentLocation(req, results._id);
 
       res.set("content-location", url).status(201).json(results);
     })
