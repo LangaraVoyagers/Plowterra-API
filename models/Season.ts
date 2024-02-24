@@ -1,12 +1,16 @@
 import { Schema, model } from "mongoose";
 import { ISeason } from "../interfaces/season.interface";
+import { AuditSchema } from "./Audit";
 
-enum PayrollTimeframeEnum  {
-  WEEKLY= "Weekly",
-  BIWEEKLY= "Bi-Weekly",
-  MONTHLY="Monthly",
-};
-enum StatusEnum  { ACTIVE= "Active", CLOSED= "Closed" };
+enum PayrollTimeframeEnum {
+  WEEKLY = "Weekly",
+  BIWEEKLY = "Bi-Weekly",
+  MONTHLY = "Monthly",
+}
+enum StatusEnum {
+  ACTIVE = "Active",
+  CLOSED = "Closed",
+}
 
 const SeasonSchema = model<ISeason>(
   "Season",
@@ -16,48 +20,22 @@ const SeasonSchema = model<ISeason>(
     endDate: { type: Number, required: false },
     payrollTimeframe: {
       type: String,
-      enum: PayrollTimeframeEnum,
+      enum: Object.keys(PayrollTimeframeEnum),
       required: true,
-      default: PayrollTimeframeEnum.BIWEEKLY,
+      default: "BIWEEKLY",
     },
     price: { type: Number, required: true },
     status: {
       type: String,
-      enum: StatusEnum,
+      enum: Object.keys(StatusEnum),
       required: true,
-      default: StatusEnum.ACTIVE,
+      default: "ACTIVE",
     },
     //productID
     //unitID
     //currencyID
     hasHarvestLog: { type: Boolean, default: false },
-    createdAt: {
-      type: Number,
-      default: new Date().getTime(),
-    },
-    createdBy: {
-      //createdBy -> from the token
-      type: String,
-      default: "",
-    },
-    updatedAt: {
-      type: Number,
-      default: null,
-    },
-    updatedBy: {
-      //updatedBy -> from the token
-      type: String,
-      default: null,
-    },
-    deletedAt: {
-      type: Number,
-      default: null,
-    },
-    deletedBy: {
-      //updatedBy -> from the token
-      type: String,
-      default: null,
-    },
+    ...AuditSchema,
   })
 );
 

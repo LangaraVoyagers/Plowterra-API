@@ -1,21 +1,23 @@
 import mongoose, { Schema } from 'mongoose';
+import { IAudit } from "../interfaces/shared.interface";
+import { AuditSchema } from "./Audit";
 
-export interface IPicker {
+export interface IPicker extends IAudit {
+  name: string;
+  phoneNumber: string;
+  emergencyContact: {
     name: string;
     phoneNumber: string;
-    emergencyContact: {
-        name: string;
-        phoneNumber: string;
-        relationToPicker: string;
-    };
-    govId: string;
-    address: string;
-    bloodType: string;
-    score: number;
-    employment: {
-        startDate: Date;
-        endDate: Date;
-    };
+    relationToPicker: string;
+  };
+  govId: string;
+  address: string;
+  bloodType: string;
+  score: number;
+  employment: {
+    startDate: Date;
+    endDate: Date;
+  };
 }
 
 const PickerSchema: Schema = new Schema(
@@ -35,6 +37,7 @@ const PickerSchema: Schema = new Schema(
       startDate: { type: Number, default: Date.now },
       endDate: { type: Number },
     },
+    ...AuditSchema,
   },
   {
     toJSON: {
