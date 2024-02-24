@@ -1,6 +1,3 @@
-import { SchemaDefinition } from "mongoose";
-import { IAudit } from "../interfaces/shared.interface";
-
 export const AuditSchema = {
   createdAt: {
     type: Number,
