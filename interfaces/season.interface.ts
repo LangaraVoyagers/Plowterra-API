@@ -1,5 +1,6 @@
 import { IAudit } from "./shared.interface";
 import { PayrollTimeframeEnum, StatusEnum } from "../models/Season";
+import { Schema } from "mongoose";
 
 export interface ISeason extends IAudit {
   name: string;
@@ -12,4 +13,10 @@ export interface ISeason extends IAudit {
   //productID
   //unitID
   //currencyID
+  deductions: Array<ISeasonDeduction>;
+}
+
+export interface ISeasonDeduction {
+  deductionID: Schema.Types.ObjectId;
+  price: number;
 }

@@ -3,18 +3,37 @@ import Season from "../models/Season";
 import { StatusEnum } from "../models/Season";
 import getContentLocation from "../shared/get-content-location";
 import Message from "../shared/Message";
+import Deduction from "../models/Deduction";
+import { ISeasonDeduction } from "../interfaces/season.interface";
 
 const message = new Message("harvest season");
 
 function create(req: Request, res: Response, next: NextFunction) {
+  const deductions: Array<ISeasonDeduction> = req.body.deductions ?? [];
+
   const season = new Season({
     name: req.body.name,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     payrollTimeframe: req.body.payrollTimeframe,
     price: req.body.price,
+    deductions,
     // TODO: Add productID, unitID, currencyID
   });
+
+  if (deductions.length) {
+    Deduction.find({ deletedAt: null })
+      .where("_id")
+      .in(deductions.map((d) => d?.deductionID))
+      .exec()
+      .catch(() => {
+        res.status(500).json({
+          data: null,
+          error: true,
+          message: message.create("error"),
+        });
+      });
+  }
 
   season
     .save()
@@ -114,8 +133,27 @@ function close(req: Request, res: Response, next: NextFunction) {
 
 function update(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
+  const deductions: Array<ISeasonDeduction> = req.body.deductions ?? [];
 
-  Season.findOneAndUpdate({ _id: id }, req.body, { new: true })
+  if (deductions.length) {
+    Deduction.find({ deletedAt: null })
+      .where("_id")
+      .in(deductions.map((d) => d?.deductionID))
+      .exec()
+      .catch(() => {
+        res.status(500).json({
+          data: null,
+          error: true,
+          message: message.create("error"),
+        });
+      });
+  }
+
+  Season.findOneAndUpdate({ _id: id }, req.body, {
+    returnDocument: "after",
+    runValidators: true,
+    context: "query",
+  })
     .exec()
     .then((data) => {
       if (!data) {

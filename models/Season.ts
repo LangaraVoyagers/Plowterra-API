@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { ISeason } from "../interfaces/season.interface";
+import { ISeason, ISeasonDeduction } from "../interfaces/season.interface";
 import { AuditSchema } from "./Audit";
 
 enum PayrollTimeframeEnum {
@@ -35,6 +35,21 @@ const SeasonSchema = model<ISeason>(
     //unitID
     //currencyID
     hasHarvestLog: { type: Boolean, default: false },
+    deductions: [
+      new Schema<ISeasonDeduction>({
+        deductionID: {
+          type: Schema.Types.ObjectId,
+          ref: "Deduction",
+        },
+        price: {
+          type: Number,
+          min: 0.01,
+          required: function () {
+            return !!this.deductionID;
+          },
+        },
+      }),
+    ],
     ...AuditSchema,
   })
 );
