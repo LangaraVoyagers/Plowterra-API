@@ -2,6 +2,7 @@ import authenticationRouter from "./authentication.routes";
 import deductionsRouter from "./deductions.routes";
 import express from "express";
 import payrollRouter from "./payrolls.routes";
+import pickersRouter from "./pickers.routes";
 import productsRouter from "./products.routes";
 import seasonRouter from "./seasons.routes";
 
@@ -13,5 +14,6 @@ router.use(payrollRouter);
 router.use(seasonRouter);
 router.use(deductionsRouter);
 router.use(productsRouter);
+router.use(pickersRouter);
 
 export default router;

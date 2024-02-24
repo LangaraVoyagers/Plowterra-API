@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { IPayroll, IPayrollDetail } from "../interfaces/payroll.interface";
+import { AuditSchema } from "./Audit";
 
 // TODO: Review picker schema when it's ready
 const PickerSchema = new Schema<{ name: string }>({
@@ -28,6 +29,7 @@ const Payroll = model<IPayroll>(
       deductions: { type: Number, required: true },
     },
     details: [DetailSchema],
+    ...AuditSchema,
   })
 );
 

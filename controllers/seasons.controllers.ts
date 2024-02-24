@@ -3,33 +3,58 @@ import { NextFunction, Request, Response } from "express";
 import Season from "../models/Season";
 import { StatusEnum } from "../models/Season";
 import getContentLocation from "../shared/get-content-location";
+import Message from "../shared/Message";
+import Deduction from "../models/Deduction";
+import { ISeasonDeduction } from "../interfaces/season.interface";
+
+const message = new Message("harvest season");
 
 function create(req: Request, res: Response, next: NextFunction) {
+  const deductions: Array<ISeasonDeduction> = req.body.deductions ?? [];
+
   const season = new Season({
     name: req.body.name,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     payrollTimeframe: req.body.payrollTimeframe,
     price: req.body.price,
+    deductions,
     // TODO: Add productID, unitID, currencyID
   });
 
+  if (deductions.length) {
+    Deduction.find({ deletedAt: null })
+      .where("_id")
+      .in(deductions.map((d) => d?.deductionID))
+      .exec()
+      .catch(() => {
+        res.status(500).json({
+          data: null,
+          error: true,
+          message: message.create("error"),
+        });
+      });
+  }
+
   season
     .save()
-    .then((results) => {
-      const url = getContentLocation(req, results._id);
+    .then((data) => {
+      const url = getContentLocation(req, data._id);
 
-      res.set("content-location", url).status(201).json({
-        message: "Season created",
-        data: results,
-        error: null,
-      });
+      res
+        .set("content-location", url)
+        .status(201)
+        .json({
+          data,
+          error: false,
+          message: message.create("success"),
+        });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).json({
-        message: "Season not created",
         data: null,
-        error,
+        error: true,
+        message: message.create("error"),
       });
     });
 }
@@ -38,11 +63,19 @@ function getAll(req: Request, res: Response, next: NextFunction) {
   Season.find({ deletedAt: null })
     .select("name status startDate endDate")
     .exec()
-    .then((results) => {
-      res.status(200).json(results);
+    .then((data) => {
+      res.status(200).json({
+        data,
+        error: false,
+        message: message.get("success"),
+      });
     })
-    .catch((error) => {
-      res.status(500).json(error);
+    .catch(() => {
+      res.status(500).json({
+        data: null,
+        error: true,
+        message: message.get("error"),
+      });
     });
 }
 
@@ -50,12 +83,21 @@ function getById(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
   Season.findById(id)
-    .exec()
-    .then((results) => {
-      res.status(200).json(results);
+    .then((data) => {
+      if (!data) {
+        return res
+          .status(404)
+          .json({ data, error: true, message: message.get("not_found") });
+      }
+
+      res
+        .status(200)
+        .json({ data, error: false, message: message.get("success") });
     })
-    .catch((error) => {
-      res.status(500).json(error);
+    .catch(() => {
+      res
+        .status(500)
+        .json({ data: null, error: true, message: message.get("error") });
     });
 }
 
@@ -63,44 +105,75 @@ function close(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
   Season.findOneAndUpdate(
-    { _id: id },
+    { _id: id, deletedAt: null },
     { status: StatusEnum.CLOSED, endDate: new Date().getTime() },
     { new: true }
   )
     .exec()
-    .then((results) => {
+    .then((data) => {
+      if (!data) {
+        return res
+          .status(404)
+          .json({ data, error: true, message: message.get("not_found") });
+      }
+
       res.status(200).json({
-        message: "Season closed",
-        data: results,
-        error: null,
+        data,
+        error: false,
+        message: message.update("success", "closed"),
       });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).json({
-        message: "Error closing season",
         data: null,
-        error,
+        error: true,
+        message: message.update("error"),
       });
     });
 }
 
 function update(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
+  const deductions: Array<ISeasonDeduction> = req.body.deductions ?? [];
 
-  Season.findOneAndUpdate({ _id: id }, req.body, { new: true })
+  if (deductions.length) {
+    Deduction.find({ deletedAt: null })
+      .where("_id")
+      .in(deductions.map((d) => d?.deductionID))
+      .exec()
+      .catch(() => {
+        res.status(500).json({
+          data: null,
+          error: true,
+          message: message.create("error"),
+        });
+      });
+  }
+
+  Season.findOneAndUpdate({ _id: id }, req.body, {
+    returnDocument: "after",
+    runValidators: true,
+    context: "query",
+  })
     .exec()
-    .then((results) => {
+    .then((data) => {
+      if (!data) {
+        return res
+          .status(404)
+          .json({ data, error: true, message: message.get("not_found") });
+      }
+
       res.status(200).json({
-        message: "Season updated",
-        data: results,
-        error: null,
+        data,
+        error: false,
+        message: message.update("success"),
       });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).json({
-        message: "Error updating season",
         data: null,
-        error,
+        error: true,
+        message: message.update("error"),
       });
     });
 }
@@ -109,31 +182,29 @@ function remove(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
   Season.findOneAndUpdate(
-    { _id: id, hasHarvestLog: false },
+    { _id: id, hasHarvestLog: false, deletedAt: null },
     { deletedAt: new Date().getTime() },
-    { new: true }
+    { returnDocument: "after" }
   )
     .exec()
-    .then((results) => {
-      if (!results) {
-        return res.status(404).json({
-          message: "Can't delete a Season that has a harvest log.",
-          data: null,
-          error: null,
-        });
-      } else {
-        res.status(200).json({
-          message: "Season deleted",
-          data: results,
-          error: null,
-        });
+    .then((data) => {
+      if (!data) {
+        return res
+          .status(404)
+          .json({ data, error: true, message: message.get("not_found") });
       }
+
+      res.status(200).json({
+        data,
+        error: false,
+        message: message.delete("success"),
+      });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).json({
-        message: "Error deleting season",
         data: null,
-        error,
+        error: true,
+        message: message.delete("error"),
       });
     });
 }

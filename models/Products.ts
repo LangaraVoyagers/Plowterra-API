@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IAudit } from "../interfaces/shared.interface";
+import { AuditSchema } from "./Audit";
 
 export interface IProduct extends IAudit {
   name: string;
@@ -7,15 +8,7 @@ export interface IProduct extends IAudit {
 
 const ProductSchema: Schema = new Schema({
   name: { type: String, required: true, maxlength: 40 },
-  createdAt: {
-    type: Number,
-    default: new Date().getTime(),
-  },
-  createdBy: {
-    //createdBy -> from the token
-    type: String,
-    default: "",
-  }
+  ...AuditSchema,
 });
 
 const Product = mongoose.model<IProduct>("Product", ProductSchema);
