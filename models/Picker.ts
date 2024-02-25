@@ -1,37 +1,31 @@
 import mongoose, { Schema } from 'mongoose';
 import { IAudit } from "../interfaces/shared.interface";
 import { AuditSchema } from "./Audit";
+import {
+  BloodType,
+  IPicker,
+  IPickerContact,
+  Relationship,
+} from "project-2-types/lib/pickers";
 
-export interface IPicker extends IAudit {
-  name: string;
-  phoneNumber: string;
-  emergencyContact: {
-    name: string;
-    phoneNumber: string;
-    relationToPicker: string;
-  };
-  govId: string;
-  address: string;
-  bloodType: string;
-  score: number;
-  employment: {
-    startDate: Date;
-    endDate: Date;
-  };
-}
+export interface IPickerSchema extends IAudit, IPicker {}
 
-const PickerSchema: Schema = new Schema(
+const PickerSchema: Schema = new Schema<IPickerSchema>(
   {
     name: { type: String, required: true, maxlength: 40 },
-    phoneNumber: { type: String, required: true, maxlength: 15 },
-    emergencyContact: {
+    phone: { type: String, required: true, maxlength: 15 },
+    emergencyContact: new Schema<IPickerContact>({
       name: { type: String, required: true, maxlength: 40 },
-      phoneNumber: { type: String, required: true, maxlength: 15 },
-      relationToPicker: { type: String, required: true, maxlength: 10 },
-    },
+      phone: { type: String, required: true, maxlength: 15 },
+      relationship: {
+        type: String,
+        enum: Object.keys(Relationship),
+        required: true,
+      },
+    }),
     govId: { type: String, maxlength: 20 },
     address: { type: String, maxlength: 50 },
-    bloodType: { type: String, maxlength: 5 },
+    bloodType: { type: String, enum: Object.keys(BloodType) },
     score: { type: Number, default: 0 },
     employment: {
       startDate: { type: Number, default: Date.now },
@@ -47,6 +41,6 @@ const PickerSchema: Schema = new Schema(
   }
 );
 
-const Picker = mongoose.model<IPicker>('Picker', PickerSchema);
+const Picker = mongoose.model<IPickerSchema>("Picker", PickerSchema);
 
 export default Picker;

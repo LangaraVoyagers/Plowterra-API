@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import Picker, { IPicker } from "../models/Picker";
+import Picker from "../models/Picker";
 import Message from "../shared/Message";
 import getContentLocation from "../shared/get-content-location";
+import { ICreatePickerRequest } from "project-2-types/lib/pickers";
 
 const message = new Message("picker");
 
 export function createPicker(req: Request, res: Response) {
-  const pickerData: IPicker = req.body;
+  const pickerData: ICreatePickerRequest = req.body;
   const picker = new Picker(pickerData);
 
   picker

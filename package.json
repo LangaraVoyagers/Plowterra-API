@@ -30,6 +30,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
+    "project-2-types": "^1.0.7",
     "serverless-http": "^3.2.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.0",
