@@ -1,13 +1,15 @@
-import express from "express";
-
-import payrollRouter from "./payrolls.routes";
-import seasonRouter from "./seasons.routes";
+import authenticationRouter from "./authentication.routes";
 import deductionsRouter from "./deductions.routes";
-import productsRouter from "./products.routes";
+import express from "express";
+import payrollRouter from "./payrolls.routes";
 import pickersRouter from "./pickers.routes";
+import productsRouter from "./products.routes";
+import seasonRouter from "./seasons.routes";
 
 const router = express.Router({ mergeParams: true });
 
+router.use(authenticationRouter)
+router.use(deductionsRouter);
 router.use(payrollRouter);
 router.use(seasonRouter);
 router.use(deductionsRouter);
