@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // authorization middleware
-app.use(authUser);
+// app.use(authUser);
 app.use("/api/v1", router);
 
 app.get('/hello', (req: Request, res: Response) => {
