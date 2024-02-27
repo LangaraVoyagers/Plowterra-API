@@ -4,4 +4,5 @@ export default {
   deduction: "/deductions",
   picker: "/pickers",
   products: "/products",
+  currency: "/currencies",
 };
