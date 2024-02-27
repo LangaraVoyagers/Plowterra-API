@@ -17,7 +17,7 @@ router.get(`${paths.picker}/:id`, getPicker);
 router.put(`${paths.picker}/:id`, updatePicker);
 
 //SOFT DELETE: /api/v1/pickers/:id
-router.patch(`${paths.picker}/:id`, softDeletePicker);
+router.delete(`${paths.picker}/:id`, softDeletePicker);
 
 // module.exports = router;
 export default router;
