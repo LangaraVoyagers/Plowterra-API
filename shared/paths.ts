@@ -1,7 +1,8 @@
 export default {
-  payroll: "/payrolls",
-  season: "/seasons",
   deduction: "/deductions",
+  harvestLog: "/harvest-log",
+  payroll: "/payrolls",
   picker: "/pickers",
-  products: "/products",
+  product: "/products",
+  season: "/seasons",
 };

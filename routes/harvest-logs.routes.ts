@@ -1,8 +1,12 @@
 import express from "express";
-const router = express.Router();
+import harvestController from "../controllers/harvestLog.controllers";
+import paths from '../shared/paths';
+const harvestLogRouter = express.Router();
 
-const harvestCtrl = require("../controllers/harvest-log.controllers");
+// POST: /api/v1/harvest-log
+harvestLogRouter.post(paths.harvestLog, harvestController.create);
 
-// TODO: Harvest Log endpoints
+// GET: /api/v1/harvest-log
+harvestLogRouter.get(paths.harvestLog, harvestController.getAll);
 
-module.exports = router;
+export default harvestLogRouter;
