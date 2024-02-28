@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IAudit } from "../interfaces/shared.interface";
+import { IAuditSchema } from "../interfaces/shared.interface";
 import { AuditSchema } from "./Audit";
 import {
   BloodType,
@@ -8,38 +8,30 @@ import {
   Relationship,
 } from "project-2-types/lib/pickers";
 
-export interface IPickerSchema extends IAudit, IPicker {}
+export interface IPickerSchema extends IAuditSchema, IPicker {}
 
-const PickerSchema: Schema = new Schema<IPickerSchema>(
-  {
+const PickerSchema: Schema = new Schema<IPickerSchema>({
+  name: { type: String, required: true, maxlength: 40 },
+  phone: { type: String, required: true, maxlength: 15 },
+  emergencyContact: new Schema<IPickerContact>({
     name: { type: String, required: true, maxlength: 40 },
     phone: { type: String, required: true, maxlength: 15 },
-    emergencyContact: new Schema<IPickerContact>({
-      name: { type: String, required: true, maxlength: 40 },
-      phone: { type: String, required: true, maxlength: 15 },
-      relationship: {
-        type: String,
-        enum: Object.keys(Relationship),
-        required: true,
-      },
-    }),
-    govId: { type: String, maxlength: 20 },
-    address: { type: String, maxlength: 50 },
-    bloodType: { type: String, enum: Object.keys(BloodType) },
-    score: { type: Number, default: 0 },
-    employment: {
-      startDate: { type: Number, default: Date.now },
-      endDate: { type: Number },
+    relationship: {
+      type: String,
+      enum: Object.keys(Relationship),
+      required: true,
     },
-    ...AuditSchema,
+  }),
+  govId: { type: String, maxlength: 20 },
+  address: { type: String, maxlength: 50 },
+  bloodType: { type: String, enum: Object.keys(BloodType) },
+  score: { type: Number, default: 0 },
+  employment: {
+    startDate: { type: Number, default: Date.now },
+    endDate: { type: Number },
   },
-  {
-    toJSON: {
-      // return the id
-      virtuals: true,
-    },
-  }
-);
+  ...AuditSchema,
+});
 
 const Picker = mongoose.model<IPickerSchema>("Picker", PickerSchema);
 

@@ -5,7 +5,7 @@ import {
 } from "../shared/jwt-token.helpers";
 
 import Farm from "../models/Farm";
-import { IUser } from "../interfaces/user.interface";
+import { IUserSchema } from "../interfaces/user.interface";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import userMessage from "../messages/user.messages";
@@ -39,11 +39,11 @@ async function signUp (req: Request, res: Response) {
       return;
     };
     
-    const user = new User<IUser>({
+    const user = new User<IUserSchema>({
       name: req.body?.name,
       email: req.body?.email,
       password: req.body?.password,
-      farmId: req.body?.farmId
+      farmId: req.body?.farmId,
     });
 
     const savedUser = await user.save();

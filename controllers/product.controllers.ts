@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
-import Product, { IProduct } from '../models/Products';
+import Product from "../models/Products";
 import getContentLocation from "../shared/get-content-location";
 import Message from "../shared/Message";
 
 const message = new Message("picker");
 
 export const createProduct = (req: Request, res: Response) => {
-  const productData: IProduct = req.body;
-  const product = new Product(productData);
+  const product = new Product({
+    name: req.body.name,
+  });
 
   product
     .save()

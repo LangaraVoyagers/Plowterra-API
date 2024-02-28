@@ -1,9 +1,13 @@
-export interface IHarvestLog {
+import { Schema } from "mongoose";
+import { IAuditSchema } from "./shared.interface";
+
+export interface IHarvestLogSchema extends IAuditSchema {
   id?: string;
-  seasonId: string;
-  pickerId: string;
+  season: Schema.Types.ObjectId;
+  picker: Schema.Types.ObjectId;
   collectedAmount: number;
-  seasonDeductionIds: Array<string>;
+  seasonDeductions: Array<Schema.Types.ObjectId>;
   totalDeduction?: number;
   notes?: string;
 }
+

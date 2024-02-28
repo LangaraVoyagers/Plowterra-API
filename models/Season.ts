@@ -1,5 +1,8 @@
-import { Schema, model } from "mongoose";
-import { ISeason, ISeasonDeduction } from "../interfaces/season.interface";
+import { Model, Schema, model } from "mongoose";
+import {
+  ISeasonSchema,
+  ISeasonDeductionSchema,
+} from "../interfaces/season.interface";
 import { AuditSchema } from "./Audit";
 
 enum PayrollTimeframeEnum {
@@ -12,9 +15,9 @@ enum StatusEnum {
   CLOSED = "Closed",
 }
 
-const SeasonSchema = model<ISeason>(
+const SeasonSchema = model<ISeasonSchema>(
   "Season",
-  new Schema({
+  new Schema<ISeasonSchema>({
     name: { type: String, required: true },
     startDate: { type: Number, required: true },
     endDate: { type: Number, required: false },
@@ -31,12 +34,15 @@ const SeasonSchema = model<ISeason>(
       required: true,
       default: "ACTIVE",
     },
-    //productID
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+    },
     //unitID
     //currencyID
     hasHarvestLog: { type: Boolean, default: false },
     deductions: [
-      new Schema<ISeasonDeduction>({
+      new Schema<ISeasonDeductionSchema>({
         deductionID: {
           type: Schema.Types.ObjectId,
           ref: "Deduction",

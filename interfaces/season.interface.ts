@@ -1,8 +1,8 @@
-import { IAudit } from "./shared.interface";
+import { IAuditSchema } from "./shared.interface";
 import { PayrollTimeframeEnum, StatusEnum } from "../models/Season";
 import { Schema } from "mongoose";
 
-export interface ISeason extends IAudit {
+export interface ISeasonSchema extends IAuditSchema {
   name: string;
   startDate: number;
   endDate: number;
@@ -10,13 +10,13 @@ export interface ISeason extends IAudit {
   price: number;
   status: keyof typeof StatusEnum;
   hasHarvestLog: boolean;
-  //productID
+  product: Schema.Types.ObjectId;
   //unitID
   //currencyID
-  deductions: Array<ISeasonDeduction>;
+  deductions: Array<ISeasonDeductionSchema>;
 }
 
-export interface ISeasonDeduction {
+export interface ISeasonDeductionSchema {
   deductionID: Schema.Types.ObjectId;
   price: number;
 }

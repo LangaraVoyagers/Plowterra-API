@@ -2,13 +2,20 @@ import { Request, Response } from "express";
 import Picker from "../models/Picker";
 import Message from "../shared/Message";
 import getContentLocation from "../shared/get-content-location";
-import { ICreatePickerRequest } from "project-2-types/lib/pickers";
 
 const message = new Message("picker");
 
 export function createPicker(req: Request, res: Response) {
-  const pickerData: ICreatePickerRequest = req.body;
-  const picker = new Picker(pickerData);
+  const picker = new Picker({
+    name: req.body?.name,
+    phone: req.body?.phone,
+    address: req.body?.address,
+    govId: req.body?.govId,
+    bloodType: req.body?.bloodType,
+    emergencyContact: req.body?.emergencyContact,
+    employment: req.body?.employment,
+    score: req.body?.score,
+  });
 
   picker
     .save()
