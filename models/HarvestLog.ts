@@ -1,14 +1,15 @@
 import { ObjectId, Schema, model } from "mongoose";
 
 import Deduction from "./Deduction";
-import { IDeduction } from "../interfaces/deduction.interface";
-import { IHarvestLog } from "../interfaces/harvestLog.interface";
-import { ISeason } from "../interfaces/season.interface";
+import { IDeductionSchema } from "../interfaces/deduction.interface";
+import { IHarvestLogSchema } from "../interfaces/harvestLog.interface";
+import { ISeasonSchema } from "../interfaces/season.interface";
 import Picker from "./Picker";
 import SeasonSchema from "./Season";
 import harvestLogMessage from "../messages/harvestLog.messages";
+import { AuditSchema } from "./Audit";
 
-const HarvestLogSchema = new Schema<IHarvestLog>(
+const HarvestLogSchema = new Schema<IHarvestLogSchema>(
   {
     season: {
       type: Schema.Types.ObjectId,
@@ -70,8 +71,10 @@ const HarvestLogSchema = new Schema<IHarvestLog>(
     //   default: [],
     // },
     notes: { type: String },
+
+    ...AuditSchema,
   },
-  { versionKey: false, toJSON: { virtuals: true } }
+  { versionKey: false }
 );
 
 HarvestLogSchema.virtual("totalDeduction").get(function () {
@@ -82,7 +85,7 @@ HarvestLogSchema.virtual("totalDeduction").get(function () {
   //   const matchingDeduction = season.deductions.find((deductionObj) => (deductionObj.deductionID as ObjectId).toString() === deductionId);
   //   if (matchingDeduction) totalDeduction += matchingDeduction?.price;
   // })
-  const season = this.season as unknown as ISeason;
+  const season = this.season as unknown as ISeasonSchema;
 
   this.seasonDeductions.forEach(({ _id }: any) => {
     const matchingDeduction = season.deductions.find((pd: any) => {
@@ -101,6 +104,6 @@ HarvestLogSchema.virtual("totalDeduction").get(function () {
 //   return await SeasonSchema.findById(this.seasonId);
 // }
 
-const HarvestLog = model<IHarvestLog>("HarvestLog", HarvestLogSchema);
+const HarvestLog = model<IHarvestLogSchema>("HarvestLog", HarvestLogSchema);
 
 export default HarvestLog;

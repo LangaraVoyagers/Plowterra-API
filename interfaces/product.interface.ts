@@ -1,5 +1,5 @@
 import { IAuditSchema } from "./shared.interface";
 
-export interface IDeductionSchema extends IAuditSchema {
+export interface IProductSchema extends IAuditSchema {
   name: string;
 }

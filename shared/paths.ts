@@ -1,6 +1,6 @@
 export default {
   deduction: "/deductions",
-  harvestLog: "/harvestlog",
+  harvestLog: "/harvestlogs",
   payroll: "/payrolls",
   picker: "/pickers",
   product: "/products",

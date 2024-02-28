@@ -1,4 +1,4 @@
-export interface IAudit {
+export interface IAuditSchema {
   createdAt: number;
   createdBy: string;
   updatedAt: number | null;
