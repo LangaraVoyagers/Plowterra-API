@@ -5,6 +5,7 @@ import payrollRouter from "./payrolls.routes";
 import pickersRouter from "./pickers.routes";
 import productsRouter from "./products.routes";
 import seasonRouter from "./seasons.routes";
+import unitRouter from "./unit.routes";
 
 const router = express.Router({ mergeParams: true });
 
@@ -15,5 +16,6 @@ router.use(seasonRouter);
 router.use(deductionsRouter);
 router.use(productsRouter);
 router.use(pickersRouter);
+router.use(unitRouter);
 
 export default router;
