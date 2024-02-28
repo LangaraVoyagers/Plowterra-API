@@ -77,27 +77,27 @@ async function signIn (req: Request, res: Response) {
     // get the user info
     const user = await User.findOne({ email: req.body?.email }).exec();
     // verify the token
-    const verificationData = verifyToken(user?.token ?? "");
+    // const verificationData = verifyToken(user?.token ?? "");
 
-    // user is already logged in
-    if (!verificationData.error && !verificationData.tokenExpired) {
-      res.status(406).json({
-        message: userMessage.USER_ALREADY_LOGGED_IN,
-        data: null,
-        error: true
-      });
-      
-      return;
-    }
-    
+    // // user is already logged in
+    // if (!verificationData.error && !verificationData.tokenExpired) {
+    //   res.status(406).json({
+    //     message: userMessage.USER_ALREADY_LOGGED_IN,
+    //     data: null,
+    //     error: true
+    //   });
+
+    //   return;
+    // }
+
     // user was not found
-    if (!(user?._id)) {
+    if (!user?._id) {
       res.status(401).json({
         message: userMessage.USER_EMAIL_PASSWORD_MISS_MATCH,
         data: null,
-        error: true
+        error: true,
       });
-      
+
       return;
     }
 
@@ -106,47 +106,49 @@ async function signIn (req: Request, res: Response) {
       res.status(409).json({
         message: userMessage.USER_LOGIN_DISABLED,
         data: null,
-        error: true
+        error: true,
       });
-      
+
       return;
     }
-    
+
     // check if hashed password and current passwords match
-    const isPasswordMatch = await bcrypt.compare(String(req.body?.password), user!.password);
-    
+    const isPasswordMatch = await bcrypt.compare(
+      String(req.body?.password),
+      user!.password
+    );
+
     // if passwords didnot match
     if (!isPasswordMatch) {
       res.status(401).json({
         message: userMessage.USER_EMAIL_PASSWORD_MISS_MATCH,
         data: null,
-        error: true
+        error: true,
       });
-      
+
       return;
     }
 
     // create JWT token
-    const token = generateToken({ 
-      id: user._id ,
+    const token = generateToken({
+      id: user._id,
       name: user.name,
       email: user.email,
-      farmId: user.farmId
+      farmId: user.farmId,
     });
 
     // update the token in DB
     const userUpdated = await User.findByIdAndUpdate(
-      user._id, 
-      { token }, 
-      { returnDocument: 'after' }
+      user._id,
+      { token },
+      { returnDocument: "after" }
     ).exec();
-    
+
     res.status(200).json({
       message: userMessage.USER_LOGIN_SUCCESS,
       data: { token: userUpdated?.token },
-      error: false
+      error: false,
     });
-
   } catch (error) {
     console.error(error);
 
