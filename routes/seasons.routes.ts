@@ -1,5 +1,5 @@
 import express from "express";
-import seasonController from "../controllers/seasons.controllers";
+import seasonController from "../controllers/season.controllers";
 import paths from "../shared/paths";
 
 const seasonRouter = express.Router();
