@@ -1,5 +1,5 @@
 import express from "express";
-import harvestController from "../controllers/harvestLog.controllers";
+import harvestController from "../controllers/harvest-log.controllers";
 import paths from '../shared/paths';
 const harvestLogRouter = express.Router();
 

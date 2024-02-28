@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 
 import HarvestLog from "../models/HarvestLog";
-import { IHarvestLogSchema } from "../interfaces/harvestLog.interface";
 import { MongooseError } from "mongoose";
 import harvestLogMessage from "../messages/harvestLog.messages";
 
