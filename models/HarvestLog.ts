@@ -59,21 +59,23 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
 
 // validation to check if the 'deductionIds' are present for the given 'seasonId'
 HarvestLogSchema.path("seasonDeductions").validate(async function (seasonDeductionIds) {
-  if (seasonDeductionIds.length > 0) {
-    let i = 0;
-    while (i < seasonDeductionIds.length) {
-      // get the season using the seasonId
-      const season = await SeasonSchema.findById(this.season) as ISeasonSchema;
-      // if deduction is not found for the current season throw error
-      if (!season.deductions.find(
-          (deduction) => 
-          deduction.deductionID.toString() === seasonDeductionIds[i++].toString())) {
-        return false;
-      }
+  let i = 0;
+  while (i < seasonDeductionIds.length) {
+    // get the season using the seasonId
+    const season = await SeasonSchema.findById(this.season) as ISeasonSchema;
+    // if deduction is not found for the current season throw error
+    if (!!season.deductions.find(
+        (deduction) => 
+        deduction?.deductionID?.toString() === seasonDeductionIds[i]?.toString())) {
+      i++; continue;
     }
-    return true;
+    
+    // season deductionIds didnot match
+    return false;
   }
-  return true; 
+
+  // season deductionIds were not passed
+  return true;
 }, harvestLogMessage.INVALID_SEASON_DEDUCTION_ID);
 
 // 'totalDeduction' virtual field computer using 'price' inside each deduction
