@@ -5,7 +5,7 @@ import {
 } from "../shared/jwt-token.helpers";
 
 import Farm from "../models/Farm";
-import { IUser } from "../interfaces/user.interface";
+import { IUserSchema } from "../interfaces/user.interface";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import userMessage from "../messages/user.messages";
@@ -29,7 +29,7 @@ async function signUp (req: Request, res: Response) {
     const farm = await Farm.findById(req.body?.farmId).exec();
     
     // if invalid farmId was passed
-    if (!(farm?._id)) {
+    if (!farm?._id) {
       res.json({
         message: userMessage.USER_CREATE_FARM_ID_ERROR,
         data: null,
@@ -39,11 +39,11 @@ async function signUp (req: Request, res: Response) {
       return;
     };
     
-    const user = new User<IUser>({
+    const user = new User<IUserSchema>({
       name: req.body?.name,
       email: req.body?.email,
       password: req.body?.password,
-      farmId: req.body?.farmId
+      farmId: req.body?.farmId,
     });
 
     const savedUser = await user.save();
@@ -144,7 +144,7 @@ async function signIn (req: Request, res: Response) {
       { returnDocument: "after" }
     ).exec();
 
-    res.status(200).json({
+    res.status(201).json({
       message: userMessage.USER_LOGIN_SUCCESS,
       data: { token: userUpdated?.token },
       error: false,
@@ -197,7 +197,7 @@ async function refreshToken (req: Request, res: Response) {
     const verificationData = verifyToken(authorization ?? "");
     
     if (!verificationData?.tokenExpired) {
-      res.status(401).json({
+      res.status(Number(verificationData?.status)).json({
         message: verificationData.message,
         data: verificationData.data,
         error: true
@@ -237,7 +237,7 @@ async function refreshToken (req: Request, res: Response) {
       { returnDocument: 'after' }
     ).exec();
 
-    res.status(200).json({
+    res.status(201).json({
       message: userMessage.USER_JWT_REFRESH_SUCCESS,
       data: { token: userUpdated?.token },
       error: false

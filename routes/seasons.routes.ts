@@ -1,25 +1,25 @@
 import express from "express";
-import seasonController from "../controllers/seasons.controllers";
 import paths from "../shared/paths";
+import seasonController from "../controllers/season.controllers";
 
 const seasonRouter = express.Router();
 
 // GET: /api/v1/seasons
-seasonRouter.get(paths.season, seasonController.getAll);
+seasonRouter.get(paths.seasons, seasonController.getAll);
 
 // GET: /api/v1/seasons/:id
-seasonRouter.get(`${paths.season}/:id`, seasonController.getById);
+seasonRouter.get(`${paths.seasons}/:id`, seasonController.getById);
 
 // POST: /api/v1/seasons
-seasonRouter.post(paths.season, seasonController.create);
+seasonRouter.post(paths.seasons, seasonController.create);
 
 // PUT: /api/v1/seasons/:id
-seasonRouter.put(`${paths.season}/:id`, seasonController.update);
+seasonRouter.put(`${paths.seasons}/:id`, seasonController.update);
 
 // SOFT DELETE: /api/v1/seasons/:id
-seasonRouter.delete(`${paths.season}/:id`, seasonController.remove);
+seasonRouter.delete(`${paths.seasons}/:id`, seasonController.remove);
 
 // PUT: /api/v1/seasons/:id/close
-seasonRouter.put(`${paths.season}/:id/close`, seasonController.close);
+seasonRouter.put(`${paths.seasons}/:id/close`, seasonController.close);
 
 export default seasonRouter;

@@ -1,9 +1,9 @@
-export interface IUser {
-  id?: string,
-  name: string,
-  email: string,
-  password: string,
-  farmId: string,
-  token?: string,
-  isDisabled?: boolean
+export interface IUserSchema {
+  id?: string;
+  name: string;
+  email: string;
+  password: string;
+  farmId: string; // TODO: Review this field
+  token?: string;
+  isDisabled?: boolean;
 }

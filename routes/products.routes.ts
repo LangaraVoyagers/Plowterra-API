@@ -1,5 +1,6 @@
+import { createProduct, getAllProducts, getProduct, softDeleteProduct, updateProduct } from '../controllers/product.controllers';
+
 import express from 'express';
-import { createProduct, getProduct, getAllProducts, updateProduct, softDeleteProduct } from '../controllers/product.controllers';
 import paths from '../shared/paths';
 
 const router = express.Router();

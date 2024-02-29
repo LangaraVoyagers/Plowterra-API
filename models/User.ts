@@ -1,9 +1,9 @@
 import { Schema, model } from "mongoose";
 
-import { IUser } from "../interfaces/user.interface";
+import { IUserSchema } from "../interfaces/user.interface";
 import { hash } from "bcrypt";
 
-const User = model<IUser>(
+const User = model<IUserSchema>(
   "User",
   new Schema({
     name: { type: String, required: true },
@@ -12,8 +12,10 @@ const User = model<IUser>(
     farmId: { type: String, required: true },
     token: { type: String, default: null },
     isDisabled: { type: Boolean, default: false },
-  }, { versionKey: false }).pre("save", async function(next) {
+  }).pre("save", async function (next) {
+    // hash the password with salt
     const hashedPassword = await hash(this.password, 10);
+    // assign the hashed password to this field
     this.password = hashedPassword;
     next();
   })

@@ -1,14 +1,16 @@
 import { Schema, model } from "mongoose";
 
-import { IFarm } from "../interfaces/farm.interface";
+import { IFarmSchema } from "../interfaces/farm.interface";
 
-const Farm = model<IFarm>(
+const Farm = model<IFarmSchema>(
   "Farm",
-  new Schema({
-    name: { type: String, required: true },
-    address: { type: String, required: true },
-    userIds: { type: [String], required: true }
-  }, { versionKey: false })
+  new Schema(
+    {
+      name: { type: String, required: true },
+      address: { type: String, required: true },
+      userIds: { type: [String], required: true },
+    }
+  )
 );
 
 export default Farm;
