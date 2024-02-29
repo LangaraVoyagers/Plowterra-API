@@ -81,8 +81,8 @@ HarvestLogSchema.virtual("totalDeduction").get(function () {
   let totalDeduction = 0;
   const season = this.season as unknown as ISeasonSchema;
 
-  this.seasonDeductions.forEach(({ _id }: any) => {
-    const matchingDeduction = season.deductions.find((pd: any) => {
+  this.seasonDeductions?.forEach(({ _id }: any) => {
+    const matchingDeduction = season?.deductions?.find((pd: any) => {
       return pd.deductionID.equals(_id);
     });
 

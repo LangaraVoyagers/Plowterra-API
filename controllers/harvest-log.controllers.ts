@@ -81,6 +81,17 @@ const getAll = async (req: Request, res: Response) => {
       .select("+createdAt")
       .exec();
 
+    // no records
+    if (!harvestLogs.length) {
+      res.status(200).json({
+        message: harvestLogMessage.NOT_FOUND,
+        data: null,
+        error: false,
+      });
+
+      return;
+    }
+
     res.status(200).json({
       message: harvestLogMessage.SUCCESS,
       data: harvestLogs,
