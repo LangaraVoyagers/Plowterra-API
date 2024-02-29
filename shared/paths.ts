@@ -3,7 +3,7 @@ export default {
   harvestLog: "/harvest-logs",
   payroll: "/payrolls",
   picker: "/pickers",
-  product: "/products",
-  season: "/seasons",
+  products: "/products",
+  unit: "/units",
   currency: "/currencies",
 };
