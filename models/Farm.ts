@@ -9,8 +9,7 @@ const Farm = model<IFarmSchema>(
       name: { type: String, required: true },
       address: { type: String, required: true },
       userIds: { type: [String], required: true },
-    },
-    { versionKey: false }
+    }
   )
 );
 

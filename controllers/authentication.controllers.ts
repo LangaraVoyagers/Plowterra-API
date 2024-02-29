@@ -29,7 +29,7 @@ async function signUp (req: Request, res: Response) {
     const farm = await Farm.findById(req.body?.farmId).exec();
     
     // if invalid farmId was passed
-    if (!(farm?._id)) {
+    if (!farm?._id) {
       res.json({
         message: userMessage.USER_CREATE_FARM_ID_ERROR,
         data: null,

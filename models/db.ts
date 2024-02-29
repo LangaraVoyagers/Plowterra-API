@@ -5,6 +5,10 @@ export default (uri: string) => {
     mongoose
       .connect(uri)
       .then(() => {
+        // disable versionKey for all models
+        mongoose.modelNames().forEach(function (modelName) {
+          mongoose.model(modelName).schema.set("versionKey", false);
+        });
         return console.info(`Successfully connected `);
       })
       .catch((error) => {

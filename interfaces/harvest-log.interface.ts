@@ -1,5 +1,5 @@
-import { Schema } from "mongoose";
 import { IAuditSchema } from "./shared.interface";
+import { Schema } from "mongoose";
 
 export interface IHarvestLogSchema extends IAuditSchema {
   id?: string;
