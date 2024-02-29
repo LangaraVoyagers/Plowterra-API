@@ -11,8 +11,8 @@ export interface ISeasonSchema extends IAuditSchema {
   status: keyof typeof StatusEnum;
   hasHarvestLog: boolean;
   product: Schema.Types.ObjectId;
-  //unitID
-  //currencyID
+  unit: Schema.Types.ObjectId;
+  currency: Schema.Types.ObjectId;
   deductions: Array<ISeasonDeductionSchema>;
 }
 

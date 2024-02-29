@@ -1,6 +1,5 @@
-import { IAudit } from "./shared.interface";
+import { IAuditSchema } from "./shared.interface";
 
-export interface IUnit extends IAudit {
-    name: string;
+export interface IUnit extends IAuditSchema {
+  name: string;
 }
-

@@ -4,10 +4,11 @@ import Season from "../models/Season";
 import { StatusEnum } from "../models/Season";
 import getContentLocation from "../shared/get-content-location";
 import Message from "../shared/Message";
-import Deduction from "../models/Deduction";
 import { ISeasonDeductionSchema } from "../interfaces/season.interface";
 
 const message = new Message("harvest season");
+
+const POPULATE_FIELDS = "product unit currency";
 
 function create(req: Request, res: Response, next: NextFunction) {
   const deductions: Array<ISeasonDeductionSchema> = req.body.deductions ?? [];
@@ -20,27 +21,14 @@ function create(req: Request, res: Response, next: NextFunction) {
     price: req.body.price,
     deductions,
     product: req.body.productId,
-    // TODO: Add unitID, currencyID
+    unit: req.body.unitId,
+    currency: req.body.currencyId,
   });
-
-  if (deductions.length) {
-    Deduction.find({ deletedAt: null })
-      .where("_id")
-      .in(deductions.map((d) => d?.deductionID))
-      .exec()
-      .catch(() => {
-        res.status(500).json({
-          data: null,
-          error: true,
-          message: message.create("error"),
-        });
-      });
-  }
 
   season
     .save()
     .then(async (data) => {
-      await data.populate("product");
+      await data.populate(POPULATE_FIELDS);
 
       const url = getContentLocation(req, data._id);
 
@@ -66,7 +54,7 @@ function create(req: Request, res: Response, next: NextFunction) {
 function getAll(req: Request, res: Response, next: NextFunction) {
   Season.find({ deletedAt: null })
     .select("name status startDate endDate")
-    .populate("product")
+    .populate(POPULATE_FIELDS)
     .exec()
     .then((data) => {
       res.status(200).json({
@@ -88,7 +76,7 @@ function getById(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
 
   Season.findById(id)
-    .populate("product")
+    .populate(POPULATE_FIELDS)
     .then((data) => {
       if (!data) {
         return res
@@ -115,7 +103,7 @@ function close(req: Request, res: Response, next: NextFunction) {
     { status: StatusEnum.CLOSED, endDate: new Date().getTime() },
     { new: true }
   )
-    .populate("product")
+    .populate(POPULATE_FIELDS)
     .exec()
     .then((data) => {
       if (!data) {
@@ -141,29 +129,27 @@ function close(req: Request, res: Response, next: NextFunction) {
 
 function update(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
+
   const deductions: Array<ISeasonDeductionSchema> = req.body.deductions ?? [];
 
-  if (deductions.length) {
-    Deduction.find({ deletedAt: null })
-      .where("_id")
-      .in(deductions.map((d) => d?.deductionID))
-      .populate("product")
-      .exec()
-      .catch(() => {
-        res.status(500).json({
-          data: null,
-          error: true,
-          message: message.create("error"),
-        });
-      });
-  }
+  const season = {
+    name: req.body.name ?? undefined,
+    startDate: req.body.startDate ?? undefined,
+    endDate: req.body.endDate ?? undefined,
+    payrollTimeframe: req.body.payrollTimeframe ?? undefined,
+    price: req.body.price ?? undefined,
+    deductions,
+    product: req.body.productId ?? undefined,
+    unit: req.body.unitId ?? undefined,
+    currency: req.body.currencyId ?? undefined,
+  };
 
-  Season.findOneAndUpdate({ _id: id }, req.body, {
+  Season.findOneAndUpdate({ _id: id }, season, {
     returnDocument: "after",
     runValidators: true,
     context: "query",
   })
-    .populate("product")
+    .populate(POPULATE_FIELDS)
     .exec()
     .then((data) => {
       if (!data) {
@@ -195,7 +181,7 @@ function remove(req: Request, res: Response, next: NextFunction) {
     { deletedAt: new Date().getTime() },
     { returnDocument: "after" }
   )
-    .populate("product")
+    .populate(POPULATE_FIELDS)
     .exec()
     .then((data) => {
       if (!data) {
