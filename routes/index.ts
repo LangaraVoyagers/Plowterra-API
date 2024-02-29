@@ -1,4 +1,5 @@
 import authenticationRouter from "./authentication.routes";
+import currencyRouter from "./currency.routes";
 import deductionsRouter from "./deductions.routes";
 import express from "express";
 import harvestLogRouter from "./harvest-logs.routes";
@@ -16,5 +17,6 @@ router.use(payrollRouter);
 router.use(productsRouter);
 router.use(pickersRouter);
 router.use(seasonRouter);
+router.use(currencyRouter);
 
 export default router;

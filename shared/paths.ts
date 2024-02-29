@@ -5,4 +5,5 @@ export default {
   picker: "/pickers",
   product: "/products",
   season: "/seasons",
+  currency: "/currencies",
 };
