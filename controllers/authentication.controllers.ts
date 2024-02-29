@@ -144,7 +144,7 @@ async function signIn (req: Request, res: Response) {
       { returnDocument: "after" }
     ).exec();
 
-    res.status(200).json({
+    res.status(201).json({
       message: userMessage.USER_LOGIN_SUCCESS,
       data: { token: userUpdated?.token },
       error: false,
@@ -197,7 +197,7 @@ async function refreshToken (req: Request, res: Response) {
     const verificationData = verifyToken(authorization ?? "");
     
     if (!verificationData?.tokenExpired) {
-      res.status(401).json({
+      res.status(Number(verificationData?.status)).json({
         message: verificationData.message,
         data: verificationData.data,
         error: true
@@ -237,7 +237,7 @@ async function refreshToken (req: Request, res: Response) {
       { returnDocument: 'after' }
     ).exec();
 
-    res.status(200).json({
+    res.status(201).json({
       message: userMessage.USER_JWT_REFRESH_SUCCESS,
       data: { token: userUpdated?.token },
       error: false

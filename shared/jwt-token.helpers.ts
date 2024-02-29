@@ -22,6 +22,7 @@ const verifyToken = (token: string) => {
     ) as IUserSchema;
     return {
       data,
+      status: 200,
       message: userMessage.USER_JWT_VERIFIED,
       error: false,
       tokenExpired: false,
@@ -32,6 +33,7 @@ const verifyToken = (token: string) => {
     if (message === "jwt expired") {
       return {
         data: decodeToken(token) as IUserSchema,
+        status: 201,
         message: userMessage.USER_JWT_EXPIRED,
         error: true,
         tokenExpired: true,
@@ -40,6 +42,7 @@ const verifyToken = (token: string) => {
 
     return {
       data: null,
+      status: 401,
       message: userMessage.USER_JWT_INVALID,
       error: true,
       tokenExpired: false,
