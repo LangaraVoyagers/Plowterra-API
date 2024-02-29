@@ -14,7 +14,7 @@ const populateQuery = [{
       model: "Product",
     },
   ],
-}, "picker seasonDeductions"];
+  }, "picker", "seasonDeductions"];
 
 const create = async (req: Request, res: Response) => {
   try {
