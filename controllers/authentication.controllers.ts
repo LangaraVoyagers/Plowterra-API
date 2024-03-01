@@ -84,7 +84,7 @@ async function signIn (req: Request, res: Response) {
     const user = await User.findOne({ email: req.body?.email }).populate({
       path: "farm",
       model: "Farm",
-      select: "-users -isDisabled"
+      select: "-users"
     }).exec();
 
     // get user farm info
