@@ -8,7 +8,14 @@ import { ISeasonDeductionSchema } from "../interfaces/season.interface";
 
 const message = new Message("harvest season");
 
-const POPULATE_FIELDS = "product unit currency";
+const POPULATE_FIELDS = [
+  {
+    path: "farm",
+    model: "Farm",
+    select: "name address",
+  },
+  "product unit currency",
+];
 
 function create(req: Request, res: Response, next: NextFunction) {
   const deductions: Array<ISeasonDeductionSchema> = req.body.deductions ?? [];
@@ -23,6 +30,7 @@ function create(req: Request, res: Response, next: NextFunction) {
     product: req.body.productId,
     unit: req.body.unitId,
     currency: req.body.currencyId,
+    farm: req.body.farmId,
   });
 
   season
@@ -142,6 +150,7 @@ function update(req: Request, res: Response, next: NextFunction) {
     product: req.body.productId ?? undefined,
     unit: req.body.unitId ?? undefined,
     currency: req.body.currencyId ?? undefined,
+    farm: req.body.farmId ?? undefined,
   };
 
   Season.findOneAndUpdate({ _id: id }, season, {

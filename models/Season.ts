@@ -9,13 +9,15 @@ import Product from "./Products";
 import Unit from "./Unit";
 import Currency from "./Currency";
 import Deduction from "./Deduction";
+import Farm from "./Farm";
 
 enum PayrollTimeframeEnum {
   WEEKLY = "Weekly",
   BIWEEKLY = "Bi-Weekly",
   MONTHLY = "Monthly",
 }
-enum StatusEnum {
+
+export enum SeasonStatusEnum {
   ACTIVE = "Active",
   CLOSED = "Closed",
 }
@@ -35,9 +37,21 @@ const SeasonSchema = model<ISeasonSchema>(
     price: { type: Number, required: true },
     status: {
       type: String,
-      enum: Object.keys(StatusEnum),
+      enum: Object.keys(SeasonStatusEnum),
       required: true,
       default: "ACTIVE",
+    },
+    farm: {
+      type: Schema.Types.ObjectId,
+      ref: "Farm",
+      required: [true, seasonMessages.INVALID_FARM_ID],
+      validate: {
+        validator: async (id: string) => {
+          const data = await Farm.exists({ _id: id });
+          return !!data;
+        },
+        message: seasonMessages.INVALID_FARM_ID,
+      },
     },
     product: {
       type: Schema.Types.ObjectId,
@@ -105,4 +119,4 @@ const SeasonSchema = model<ISeasonSchema>(
 );
 
 export default SeasonSchema;
-export { PayrollTimeframeEnum, StatusEnum };
+export { PayrollTimeframeEnum, SeasonStatusEnum as StatusEnum };
