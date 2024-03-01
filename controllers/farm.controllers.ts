@@ -33,7 +33,13 @@ async function create (req: Request, res: Response) {
 // get all farms
 async function getAll (req: Request, res: Response) {
   try {
-    const farms = await Farm.find({}).populate("users").exec();
+    const farms = await Farm.find({})
+      .populate({
+        path: "users",
+        model: "User",
+        select: "-token"
+      })
+      .exec();
     
     // no farms exist
     if (!farms.length) {
@@ -66,7 +72,13 @@ async function getAll (req: Request, res: Response) {
 // get farm by Id
 async function getById (req: Request, res: Response) {
   try {
-    const farm = await Farm.findById(req.params?.id).populate("users").exec();
+    const farm = await Farm.findById(req.params?.id)
+      .populate({
+        path: "users",
+        model: "User",
+        select: "-token"
+      })
+      .exec();
     
     // not found
     if (!farm) {
@@ -101,7 +113,11 @@ async function updateById (req: Request, res: Response) {
   try {
     const updatedFarm = await Farm.findByIdAndUpdate(
       { _id: req.params?.id },
-      { name: req.body?.name, address: req.body?.address },
+      { 
+        name: req.body?.name, 
+        address: req.body?.address,
+        isDisabled: req.body?.isDisabled 
+      },
       { returnDocument: "after", runValidators: true }
     ).exec();
 

@@ -57,7 +57,7 @@ async function signUp (req: Request, res: Response) {
         model: "Farm",
         select: "-users"
       })
-      .select(["-password", "-token"])
+      .select("-token")
       .exec();
 
     res.status(201).json({
