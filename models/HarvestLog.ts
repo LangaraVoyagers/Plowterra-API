@@ -14,16 +14,18 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
     required: [true, harvestLogMessage.INVALID_SEASON_ID],
     validate: {
       validator: async (seasonId: string) => {
-        const season = await SeasonSchema.findOne({ _id: seasonId, deletedAt: null });
+        const season = await SeasonSchema.findOne({
+          _id: seasonId,
+          deletedAt: null,
+        });
         // if season doesnot exists
         if (!season) return false;
         // if hasHarvestLog flag is false update it to true
-        if (!season.hasHarvestLog) 
-          await SeasonSchema.findByIdAndUpdate(
-            season.id,
-            { hasHarvestLog: true }
-          );
-        
+        if (!season.hasHarvestLog)
+          await SeasonSchema.findByIdAndUpdate(season.id, {
+            hasHarvestLog: true,
+          });
+
         return true;
       },
       message: harvestLogMessage.INVALID_SEASON_ID,
@@ -50,11 +52,11 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
   seasonDeductions: {
     type: [Schema.Types.ObjectId],
     ref: "Deduction",
-    default: []
+    default: [],
   },
   notes: { type: String },
-  
-  ...AuditSchema
+  settled: { type: Boolean, default: false },
+  ...AuditSchema,
 });
 
 // validation to check if the 'deductionIds' are present for the given 'seasonId'
