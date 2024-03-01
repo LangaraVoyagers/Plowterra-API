@@ -9,7 +9,7 @@ const User = model<IUserSchema>(
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    farmId: { type: String, required: true },
+    farm: { type: Schema.Types.ObjectId, ref: "Farm", required: true },
     token: { type: String, default: null },
     isDisabled: { type: Boolean, default: false },
   }).pre("save", async function (next) {

@@ -7,6 +7,7 @@ const userMessage = {
   USER_LOGIN_ERROR: "Login unsuccessful, please try again later",
   USER_ALREADY_LOGGED_IN: "User is already logged in, please try again after few minutes",
   USER_LOGIN_DISABLED: "Account has been disabled, please contact admin",
+  USER_FARM_DISABLED: "Farm Account has been disabled, please contact admin",
   USER_EMAIL_PASSWORD_MISS_MATCH: "Your password is incorrect or account doesn't exists",
   USER_JWT_VERIFIED: "Valid token",
   USER_JWT_REFRESH_SUCCESS: "Refreshed successfully",
