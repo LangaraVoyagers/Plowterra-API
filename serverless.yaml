@@ -1,0 +1,19 @@
+service: plowterra-api
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  region: us-west-2
+  memorySize: 128
+functions:
+  app:
+    handler: dist/app.handler
+    events: 
+      - http: 
+          path: /
+          method: any
+          cors: true
+      - http: 
+          path: /{proxy+}
+          method: any
+          cors: true
