@@ -5,7 +5,7 @@ import { IHarvestLogSchema } from "../interfaces/harvest-log.interface";
 import { ISeasonSchema } from "../interfaces/season.interface";
 import Picker from "./Picker";
 import SeasonSchema from "./Season";
-import harvestLogMessage from "../messages/harvestLog.messages";
+import harvestLogMessage from "../messages/harvest-log.messages";
 
 const HarvestLogSchema = new Schema<IHarvestLogSchema>({
   season: {

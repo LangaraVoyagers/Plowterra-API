@@ -6,10 +6,19 @@ import {
   verifyToken
 } from "../shared/jwt-token.helpers";
 
+const ignoreAuthRoutes = [
+  "auth",
+  "farms"
+];
+
 // all requests pass through this function to check "Authorization" token
 async function authUser (req: Request, res: Response, next: NextFunction) {
-  // auth paths, security not needed
-  if (req.url.includes("auth")) {
+  // check for ignore paths
+  const isIgnorePath = ignoreAuthRoutes.some(route => req.url.split("/")?.at(3)?.toLocaleLowerCase("en-US") === route);
+  
+  // ignore unsecured routes
+  if (isIgnorePath) {
+    console.log()
     next();
     return;
   } 

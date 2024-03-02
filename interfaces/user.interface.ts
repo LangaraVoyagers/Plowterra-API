@@ -3,7 +3,7 @@ export interface IUserSchema {
   name: string;
   email: string;
   password: string;
-  farmId: string; // TODO: Review this field
+  farm: string;
   token?: string;
   isDisabled?: boolean;
 }
