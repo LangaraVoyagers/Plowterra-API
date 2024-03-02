@@ -6,13 +6,14 @@ export interface ISeasonSchema extends IAuditSchema {
   name: string;
   startDate: number;
   endDate: number;
+  farm: Schema.Types.ObjectId;
   payrollTimeframe: keyof typeof PayrollTimeframeEnum;
   price: number;
   status: keyof typeof StatusEnum;
   hasHarvestLog: boolean;
   product: Schema.Types.ObjectId;
-  //unitID
-  //currencyID
+  unit: Schema.Types.ObjectId;
+  currency: Schema.Types.ObjectId;
   deductions: Array<ISeasonDeductionSchema>;
 }
 

@@ -36,7 +36,8 @@ const create = async (req: Request, res: Response) => {
       collectedAmount: Number(req.body?.collectedAmount),
       seasonDeductions: req.body?.seasonDeductionIds,
       notes: req.body?.notes,
-      createdBy: res.locals.user?.name
+      createdBy: res.locals.user?.name,
+      createdAt: req.body?.createdAt, // For testing, we shoudn't send the date on the frontend
     });
 
     // save the log and populate fields

@@ -12,10 +12,10 @@ export interface IPickerSchema extends IAuditSchema, IPicker {}
 
 const PickerSchema: Schema = new Schema<IPickerSchema>({
   name: { type: String, required: true, maxlength: 40 },
-  phone: { type: String, required: true, maxlength: 15 },
+  phone: { type: String, required: true, maxlength: 30 },
   emergencyContact: new Schema<IPickerContact>({
     name: { type: String, required: true, maxlength: 40 },
-    phone: { type: String, required: true, maxlength: 15 },
+    phone: { type: String, required: true, maxlength: 30 },
     relationship: {
       type: String,
       enum: Object.keys(Relationship),

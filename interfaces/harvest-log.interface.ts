@@ -9,5 +9,6 @@ export interface IHarvestLogSchema extends IAuditSchema {
   seasonDeductions: Array<Schema.Types.ObjectId>;
   totalDeduction?: number;
   notes?: string;
+  settled?: boolean;
 }
 

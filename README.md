@@ -59,6 +59,7 @@ Will contain all the shared helper functions
 - [mongoose](https://www.npmjs.com/package/mongoose)
 - [swagger-autogen](https://www.npmjs.com/package/swagger-autogen)
 - [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express)
+- [lodash](https://www.npmjs.com/package/lodash)
 ---
 
 #### Development Dependencies
