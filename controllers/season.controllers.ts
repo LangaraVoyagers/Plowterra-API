@@ -14,7 +14,9 @@ const POPULATE_FIELDS = [
     model: "Farm",
     select: "name address",
   },
-  "product unit currency",
+  "product",
+  "unit",
+  "currency",
 ];
 
 function create(req: Request, res: Response, next: NextFunction) {
@@ -61,7 +63,7 @@ function create(req: Request, res: Response, next: NextFunction) {
 
 function getAll(req: Request, res: Response, next: NextFunction) {
   Season.find({ deletedAt: null })
-    .select("name status startDate endDate")
+    .select("name status startDate endDate currency product unit deductions")
     .populate(POPULATE_FIELDS)
     .exec()
     .then((data) => {
