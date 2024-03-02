@@ -7,4 +7,5 @@ export default {
   products: "/products",
   unit: "/units",
   currency: "/currencies",
+  farm: "/farms",
 };

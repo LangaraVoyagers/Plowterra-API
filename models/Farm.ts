@@ -7,8 +7,9 @@ const Farm = model<IFarmSchema>(
   new Schema(
     {
       name: { type: String, required: true },
-      address: { type: String, required: true },
-      userIds: { type: [String], required: true },
+      address: { type: String, default: null },
+      users: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
+      isDisabled: { type: Boolean, default: false }
     }
   )
 );

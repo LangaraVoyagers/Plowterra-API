@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import HarvestLog from "../models/HarvestLog";
 import { MongooseError } from "mongoose";
 import { compareDates } from "../shared/date.helpers";
-import harvestLogMessage from "../messages/harvestLog.messages";
+import harvestLogMessage from "../messages/harvest-log.messages";
 
 const populateQuery = [{
   path: "season",
@@ -198,7 +198,7 @@ const updateById = async (req: Request, res: Response) => {
       notes: req.body?.notes,
       updatedBy: res.locals.user?.name,
       updatedAt: new Date().getTime(),
-    }, { new: true, upsert: true, runValidators: true })
+    }, { returnDocument: "after", runValidators: true })
     .populate(populateQuery)
     .select("+createdAt")
     .exec();
@@ -272,7 +272,7 @@ const deleteById = async (req: Request, res: Response) => {
     const updatedHarvestLog = await HarvestLog.findByIdAndUpdate(req.params?.id, {
       deletedAt: new Date().getTime(),
       deletedBy: res.locals.user?.name
-    }, { new: true, upsert: true})
+    }, { returnDocument: "after", runValidators: true })
     .populate(populateQuery)
     .exec();
 
