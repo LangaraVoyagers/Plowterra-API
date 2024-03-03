@@ -175,99 +175,18 @@ async function create(req: Request, res: Response, next: NextFunction) {
       lastPayroll,
       harvestLogIds,
     } = payrollData;
-    // let startDate: null | number = null;
 
-    // const season: any = await SeasonSchema.findOne({
-    //   _id: seasonId,
-    //   deletedAt: null,
-    //   status: "ACTIVE",
-    // }).populate(["product", "unit", "currency"]);
-
-    // if (!season) {
-    //   return res
-    //     .status(404)
-    //     .json({ data: null, error: true, message: message.create("error") });
-    // }
-
-    // const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
-
-    // if (!lastPayroll) {
-    //   startDate = season?.startDate;
-    // } else {
-    //   startDate = lastPayroll.nextEstimatedPayrollDate;
-    // }
-
-    // // If the next payroll start date is greated than the current payrrol end date
-    // if (!!lastPayroll && lastPayroll.nextEstimatedPayrollDate > endDate) {
-    //   throw new Error(
-    //     `Invalid end date, Next payroll date starts ${new Date(
-    //       lastPayroll.nextEstimatedPayrollDate
-    //     )}`
-    //   );
-    // }
-
-    // const data = await HarvestLog.find({
-    //   deletedAt: null,
-    //   season: season?._id,
-    //   createdAt: {
-    //     $gte: startDate,
-    //     $lte: endDate,
-    //   },
-    // }).populate("picker");
-
-    // let grossAmount = 0;
-    // let collectedAmount = 0;
-    // let deductions = 0;
-    // const groupedByPicker = groupBy(data, (data: { picker: any }) =>
-    //   data.picker?._id.toString()
-    // );
-
-    // const details = Object.keys(groupedByPicker)
-    //   .filter((picker) => picker !== "undefined")
-    //   .map((pickerId) =>
-    //     groupedByPicker[pickerId].reduce(
-    //       (prev, curr: any) => {
-    //         return {
-    //           picker: {
-    //             id: pickerId,
-    //             name: curr.picker?.name,
-    //           },
-    //           collectedAmount: prev.collectedAmount + curr.collectedAmount,
-    //           deductions: 0,
-    //           grossAmount:
-    //             prev.grossAmount + curr.collectedAmount * season?.price,
-    //           netAmount:
-    //             prev.grossAmount + curr.collectedAmount * season?.price,
-    //         };
-    //       },
-    //       { collectedAmount: 0, grossAmount: 0, netAmount: 0 }
-    //     )
-    //   );
-    // const pickersCount = details.length;
-
-    // data.forEach((harvestLog) => {
-    //   collectedAmount += harvestLog.collectedAmount;
-    //   grossAmount += harvestLog.collectedAmount * season?.price;
-    //   // deductions = 0
-    // });
-
-    // const expected = [expectedTotal.totalCollectedAmount, expectedTotal.totalDeductions, expectedTotal.totalGrossAmount]
-    //   .map(Number)
-    //   .reduce((prev, curr) => prev + curr, 0);
-
-    // const calculated = [totals.collectedAmount , totals.deductions, totals.grossAmount].reduce(
-    //   (prev, curr) => prev + curr,
-    //   0
-    // );
-    console.log({ expectedTotal });
-
-    console.log({ totals });
     const validAmounts =
       expectedTotal.totalCollectedAmount == totals.collectedAmount &&
       expectedTotal.totalDeductions == totals.deductions &&
       expectedTotal.totalGrossAmount == totals.grossAmount;
+
     if (!validAmounts) {
-      throw new Error(`Totals don't match.`);
+      throw new Error(
+        `Totals don't match. Received: ${JSON.stringify(
+          expectedTotal
+        )}. Calculated: ${JSON.stringify(totals)} `
+      );
     }
 
     const session = await mongoose.startSession();
