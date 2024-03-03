@@ -1,8 +1,13 @@
 import express from "express";
+import {
+  createUnit,
+  deleteUnit,
+  getAllUnit,
+  getUnit,
+} from "../controllers/unit.controllers";
 import paths from "../shared/paths";
-import { createUnit, getAllUnit, getUnit, deleteUnit } from "../controllers/unit.controllers";
 
-const router = express.Router()
+const router = express.Router();
 
 // POST: /api/v1/units
 router.post(paths.unit, createUnit);
@@ -17,5 +22,3 @@ router.get(`${paths.unit}/:id`, getUnit);
 router.delete(`${paths.unit}/:id`, deleteUnit);
 
 export default router;
-
-

@@ -1,5 +1,5 @@
-import authenticationController from "../controllers/authentication.controllers";
 import express from "express";
+import authenticationController from "../controllers/authentication.controllers";
 
 const authenticationRouter = express.Router();
 
@@ -10,7 +10,10 @@ authenticationRouter.post("/auth/signin", authenticationController.signIn);
 authenticationRouter.post("/auth/signup", authenticationController.signUp);
 
 // GET: /api/v1/auth/refresh
-authenticationRouter.get("/auth/refresh", authenticationController.refreshToken);
+authenticationRouter.get(
+  "/auth/refresh",
+  authenticationController.refreshToken
+);
 
 // GET: /api/v1/logout
 authenticationRouter.get("/logout", authenticationController.logOut);

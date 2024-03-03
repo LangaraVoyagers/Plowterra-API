@@ -1,11 +1,11 @@
 import { Schema, model } from "mongoose";
 
-import { AuditSchema } from "./Audit";
 import { IHarvestLogSchema } from "../interfaces/harvest-log.interface";
 import { ISeasonSchema } from "../interfaces/season.interface";
+import harvestLogMessage from "../messages/harvest-log.messages";
+import { AuditSchema } from "./Audit";
 import Picker from "./Picker";
 import SeasonSchema from "./Season";
-import harvestLogMessage from "../messages/harvest-log.messages";
 
 const HarvestLogSchema = new Schema<IHarvestLogSchema>({
   season: {
@@ -60,18 +60,25 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
 });
 
 // validation to check if the 'deductionIds' are present for the given 'seasonId'
-HarvestLogSchema.path("seasonDeductions").validate(async function (seasonDeductionIds) {
+HarvestLogSchema.path("seasonDeductions").validate(async function (
+  seasonDeductionIds
+) {
   let i = 0;
   while (i < seasonDeductionIds.length) {
     // get the season using the seasonId
-    const season = await SeasonSchema.findById(this.season) as ISeasonSchema;
+    const season = (await SeasonSchema.findById(this.season)) as ISeasonSchema;
     // if deduction is not found for the current season throw error
-    if (!!season.deductions.find(
-        (deduction) => 
-        deduction?.deductionID?.toString() === seasonDeductionIds[i]?.toString())) {
-      i++; continue;
+    if (
+      !!season.deductions.find(
+        (deduction) =>
+          deduction?.deductionID?.toString() ===
+          seasonDeductionIds[i]?.toString()
+      )
+    ) {
+      i++;
+      continue;
     }
-    
+
     // season deductionIds didnot match
     return false;
   }
@@ -99,7 +106,7 @@ HarvestLogSchema.virtual("totalDeduction").get(function () {
 });
 
 // populate virtual fields when converting to JSON
-HarvestLogSchema.set('toJSON', { virtuals: true });
+HarvestLogSchema.set("toJSON", { virtuals: true });
 
 const HarvestLog = model<IHarvestLogSchema>("HarvestLog", HarvestLogSchema);
 
