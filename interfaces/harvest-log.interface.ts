@@ -1,5 +1,5 @@
-import { IAuditSchema } from "./shared.interface";
 import { Schema } from "mongoose";
+import { IAuditSchema } from "./shared.interface";
 
 export interface IHarvestLogSchema extends IAuditSchema {
   id?: string;
@@ -10,4 +10,3 @@ export interface IHarvestLogSchema extends IAuditSchema {
   totalDeduction?: number;
   notes?: string;
 }
-

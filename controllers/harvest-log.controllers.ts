@@ -1,20 +1,24 @@
 import { Request, Response } from "express";
 
-import HarvestLog from "../models/HarvestLog";
 import { MongooseError } from "mongoose";
-import { compareDates } from "../shared/date.helpers";
 import harvestLogMessage from "../messages/harvestLog.messages";
+import HarvestLog from "../models/HarvestLog";
+import { compareDates } from "../shared/date.helpers";
 
-const populateQuery = [{
-  path: "season",
-  model: "Season",
-  populate: [
-    {
-      path: "product",
-      model: "Product",
-    },
-  ],
-  }, "picker", "seasonDeductions"];
+const populateQuery = [
+  {
+    path: "season",
+    model: "Season",
+    populate: [
+      {
+        path: "product",
+        model: "Product",
+      },
+    ],
+  },
+  "picker",
+  "seasonDeductions",
+];
 
 const create = async (req: Request, res: Response) => {
   try {
@@ -36,11 +40,13 @@ const create = async (req: Request, res: Response) => {
       collectedAmount: Number(req.body?.collectedAmount),
       seasonDeductions: req.body?.seasonDeductionIds,
       notes: req.body?.notes,
-      createdBy: res.locals.user?.name
+      createdBy: res.locals.user?.name,
     });
 
     // save the log and populate fields
-    const savedHarvestLog = await (await harvestLog.save()).populate(populateQuery)
+    const savedHarvestLog = await (
+      await harvestLog.save()
+    ).populate(populateQuery);
 
     // return the response
     res.status(201).json({
@@ -48,7 +54,6 @@ const create = async (req: Request, res: Response) => {
       data: savedHarvestLog,
       error: false,
     });
-    
   } catch (error) {
     // if there are any validation errors
     if ((error as any).name === "ValidationError") {
@@ -75,7 +80,7 @@ const create = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const harvestLogs = await HarvestLog.find({ deletedAt: null,})
+    const harvestLogs = await HarvestLog.find({ deletedAt: null })
       .sort({ createdAt: "desc" })
       .populate(populateQuery)
       .select("+createdAt")
@@ -97,14 +102,13 @@ const getAll = async (req: Request, res: Response) => {
       data: harvestLogs,
       error: false,
     });
-    
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       message: harvestLogMessage.ERROR,
       data: null,
-      error: true
+      error: true,
     });
   }
 };
@@ -115,8 +119,8 @@ const getById = async (req: Request, res: Response) => {
       _id: req.params?.id,
       deletedAt: null,
     })
-    .populate(populateQuery)
-    .exec();
+      .populate(populateQuery)
+      .exec();
 
     // harvest log doesnot exist
     if (!harvestLog) {
@@ -134,14 +138,13 @@ const getById = async (req: Request, res: Response) => {
       data: harvestLog,
       error: false,
     });
-
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       message: harvestLogMessage.ERROR,
       data: null,
-      error: true
+      error: true,
     });
   }
 };
@@ -152,9 +155,9 @@ const updateById = async (req: Request, res: Response) => {
       _id: req.params?.id,
       deletedAt: null,
     })
-    .populate(populateQuery)
-    .select("+createdAt")
-    .exec();
+      .populate(populateQuery)
+      .select("+createdAt")
+      .exec();
 
     // harvest log doesnot exist
     if (!harvestLog) {
@@ -168,13 +171,13 @@ const updateById = async (req: Request, res: Response) => {
     }
 
     const { days } = compareDates(new Date().getTime(), harvestLog!.createdAt);
-    
+
     // check if a day has passed since the harvest log was created
     if (days > 0) {
       res.status(403).json({
         message: harvestLogMessage.HARVEST_LOG_UDATE_PASSED_DATE,
         data: null,
-        error: true
+        error: true,
       });
 
       return;
@@ -192,23 +195,26 @@ const updateById = async (req: Request, res: Response) => {
     }
 
     // update harvest log
-    const updatedHarvestLog = await HarvestLog.findByIdAndUpdate(req.params?.id, {
-      collectedAmount: Number(req.body?.collectedAmount),
-      seasonDeductions: req.body?.seasonDeductionIds,
-      notes: req.body?.notes,
-      updatedBy: res.locals.user?.name,
-      updatedAt: new Date().getTime(),
-    }, { new: true, upsert: true, runValidators: true })
-    .populate(populateQuery)
-    .select("+createdAt")
-    .exec();
+    const updatedHarvestLog = await HarvestLog.findByIdAndUpdate(
+      req.params?.id,
+      {
+        collectedAmount: Number(req.body?.collectedAmount),
+        seasonDeductions: req.body?.seasonDeductionIds,
+        notes: req.body?.notes,
+        updatedBy: res.locals.user?.name,
+        updatedAt: new Date().getTime(),
+      },
+      { new: true, upsert: true, runValidators: true }
+    )
+      .populate(populateQuery)
+      .select("+createdAt")
+      .exec();
 
     res.status(200).json({
       message: harvestLogMessage.HARVEST_LOG_UPDATE_SUCCESS,
       data: updatedHarvestLog,
-      error: false
+      error: false,
     });
-    
   } catch (error) {
     // if there are any validation errors
     if ((error as any).name === "ValidationError") {
@@ -231,8 +237,7 @@ const updateById = async (req: Request, res: Response) => {
       error: true,
     });
   }
-}
-
+};
 
 const deleteById = async (req: Request, res: Response) => {
   try {
@@ -240,9 +245,9 @@ const deleteById = async (req: Request, res: Response) => {
       _id: req.params?.id,
       deletedAt: null,
     })
-    .populate(populateQuery)
-    .select("+createdAt")
-    .exec();
+      .populate(populateQuery)
+      .select("+createdAt")
+      .exec();
 
     // harvest log doesnot exist
     if (!harvestLog) {
@@ -256,32 +261,35 @@ const deleteById = async (req: Request, res: Response) => {
     }
 
     const { days } = compareDates(new Date().getTime(), harvestLog!.createdAt);
-    
+
     // check if a day has passed since the harvest log was created
     if (days > 0) {
       res.status(403).json({
         message: harvestLogMessage.HARVEST_LOG_DELETE_PASSED_DATE,
         data: null,
-        error: true
+        error: true,
       });
 
       return;
     }
 
     // update harvest log and set the deletedAt, deletedBy field
-    const updatedHarvestLog = await HarvestLog.findByIdAndUpdate(req.params?.id, {
-      deletedAt: new Date().getTime(),
-      deletedBy: res.locals.user?.name
-    }, { new: true, upsert: true})
-    .populate(populateQuery)
-    .exec();
+    const updatedHarvestLog = await HarvestLog.findByIdAndUpdate(
+      req.params?.id,
+      {
+        deletedAt: new Date().getTime(),
+        deletedBy: res.locals.user?.name,
+      },
+      { new: true, upsert: true }
+    )
+      .populate(populateQuery)
+      .exec();
 
     res.status(200).json({
       message: harvestLogMessage.HARVEST_LOG_DELETE_SUCCESS,
       data: updatedHarvestLog,
-      error: false
+      error: false,
     });
-    
   } catch (error) {
     console.error(error);
 
@@ -291,14 +299,14 @@ const deleteById = async (req: Request, res: Response) => {
       error: true,
     });
   }
-}
+};
 
 const harvestLogController = {
   create,
   getAll,
   getById,
   updateById,
-  deleteById
+  deleteById,
 };
 
 export default harvestLogController;

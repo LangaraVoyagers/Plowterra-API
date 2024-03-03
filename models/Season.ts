@@ -1,7 +1,7 @@
-import { Model, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import {
-  ISeasonSchema,
   ISeasonDeductionSchema,
+  ISeasonSchema,
 } from "../interfaces/season.interface";
 import { AuditSchema } from "./Audit";
 

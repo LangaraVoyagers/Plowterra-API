@@ -7,8 +7,7 @@ const Unit = model<IUnit>(
   new Schema({
     name: { type: String, required: true },
     ...AuditSchema,
-  }
-  )
-)
+  })
+);
 
 export default Unit;

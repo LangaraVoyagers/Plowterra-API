@@ -1,6 +1,6 @@
-import { IAuditSchema } from "./shared.interface";
-import { PayrollTimeframeEnum, StatusEnum } from "../models/Season";
 import { Schema } from "mongoose";
+import { PayrollTimeframeEnum, StatusEnum } from "../models/Season";
+import { IAuditSchema } from "./shared.interface";
 
 export interface ISeasonSchema extends IAuditSchema {
   name: string;

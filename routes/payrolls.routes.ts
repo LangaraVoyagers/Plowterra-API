@@ -8,5 +8,4 @@ payrollRouter.get(paths.payroll, payrollController.getAll);
 
 payrollRouter.get(`${paths.payroll}/:id`, payrollController.getById);
 
-
 export default payrollRouter;

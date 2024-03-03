@@ -1,7 +1,7 @@
-import { Response, Request } from "express";
+import { Request, Response } from "express";
 import Unit from "../models/Unit";
-import getContentLocation from "../shared/get-content-location";
 import Message from "../shared/Message";
+import getContentLocation from "../shared/get-content-location";
 
 const message = new Message("unit");
 
