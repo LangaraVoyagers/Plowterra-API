@@ -8,16 +8,15 @@ import mongoose from "mongoose";
 
 const message = new Message("payroll");
 
-async function create(req: Request, res: Response, next: NextFunction) {
+type ProductionRequest = {
+  farmId: string;
+  seasonId: string;
+  endDate: number;
+};
+
+async function getProductionData(payload: ProductionRequest) {
   try {
-    const farmId = req.body.farmId;
-    const seasonId = req.body.seasonId;
-    const endDate = req.body.endDate ?? Date.now();
-    const expectedTotal = {
-      totalGrossAmount: req.body.totals?.totalGrossAmount ?? 0,
-      totalCollectedAmount: req.body.totals?.totalCollectedAmount ?? 0,
-      totalDeductions: req.body.totals?.totalDeductions ?? 0,
-    };
+    const { farmId, seasonId, endDate = Date.now() } = payload;
 
     let startDate: null | number = null;
 
@@ -28,9 +27,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
     }).populate(["product", "unit", "currency"]);
 
     if (!season) {
-      return res
-        .status(404)
-        .json({ data: null, error: true, message: message.create("error") });
+      throw new Error("Season not found");
     }
 
     const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
@@ -62,6 +59,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
     let grossAmount = 0;
     let collectedAmount = 0;
     let deductions = 0;
+
     const groupedByPicker = groupBy(data, (data: { picker: any }) =>
       data.picker?._id.toString()
     );
@@ -87,6 +85,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
           { collectedAmount: 0, grossAmount: 0, netAmount: 0 }
         )
       );
+
     const pickersCount = details.length;
 
     data.forEach((harvestLog) => {
@@ -95,18 +94,180 @@ async function create(req: Request, res: Response, next: NextFunction) {
       // deductions = 0
     });
 
-    const expected = Object.values(expectedTotal)
-      .map(Number)
-      .reduce((prev, curr) => prev + curr, 0);
+    return {
+      farmId,
+      startDate,
+      endDate,
+      pickersCount,
+      season: {
+        id: season._id,
+        name: season.name,
+        currency: season.currency.name,
+        price: season.price,
+        product: season.product.name,
+        unit: season.unit.name,
+      },
+      totals: {
+        netAmount: grossAmount - deductions,
+        collectedAmount,
+        grossAmount,
+        deductions,
+      },
+      lastPayroll,
+      harvestLogIds: data.map((harvestLog) => harvestLog._id),
+      details: details,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
 
-    const calculated = [grossAmount, collectedAmount, deductions].reduce(
-      (prev, curr) => prev + curr,
-      0
-    );
-    if (expected !== calculated) {
-      throw new Error(
-        `Totals don't match. Expected: ${expected}, Calculated: ${calculated}`
-      );
+async function getPreview(req: Request, res: Response, next: NextFunction) {
+  try {
+    const farmId = req.body.farmId;
+    const seasonId = req.body.seasonId;
+    const endDate = req.body.endDate ?? Date.now();
+
+    const data = await getProductionData({
+      farmId,
+      seasonId,
+      endDate,
+    });
+
+    res.status(200).json({
+      data,
+      error: false,
+      message: message.get("success"),
+    });
+  } catch (error) {
+    console.log({ error });
+    res.status(500).json({
+      data: null,
+      error: true,
+      message: message.get("error"),
+    });
+  }
+}
+
+async function create(req: Request, res: Response, next: NextFunction) {
+  try {
+    const farmId = req.body.farmId;
+    const seasonId = req.body.seasonId;
+    const endDate = req.body.endDate ?? Date.now();
+    const expectedTotal = {
+      totalGrossAmount: req.body.totals?.totalGrossAmount ?? 0,
+      totalCollectedAmount: req.body.totals?.totalCollectedAmount ?? 0,
+      totalDeductions: req.body.totals?.totalDeductions ?? 0,
+    };
+
+    const payrollData = await getProductionData({
+      farmId,
+      seasonId,
+      endDate: endDate,
+    });
+
+    const {
+      startDate,
+      season,
+      pickersCount,
+      totals,
+      details,
+      lastPayroll,
+      harvestLogIds,
+    } = payrollData;
+    // let startDate: null | number = null;
+
+    // const season: any = await SeasonSchema.findOne({
+    //   _id: seasonId,
+    //   deletedAt: null,
+    //   status: "ACTIVE",
+    // }).populate(["product", "unit", "currency"]);
+
+    // if (!season) {
+    //   return res
+    //     .status(404)
+    //     .json({ data: null, error: true, message: message.create("error") });
+    // }
+
+    // const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
+
+    // if (!lastPayroll) {
+    //   startDate = season?.startDate;
+    // } else {
+    //   startDate = lastPayroll.nextEstimatedPayrollDate;
+    // }
+
+    // // If the next payroll start date is greated than the current payrrol end date
+    // if (!!lastPayroll && lastPayroll.nextEstimatedPayrollDate > endDate) {
+    //   throw new Error(
+    //     `Invalid end date, Next payroll date starts ${new Date(
+    //       lastPayroll.nextEstimatedPayrollDate
+    //     )}`
+    //   );
+    // }
+
+    // const data = await HarvestLog.find({
+    //   deletedAt: null,
+    //   season: season?._id,
+    //   createdAt: {
+    //     $gte: startDate,
+    //     $lte: endDate,
+    //   },
+    // }).populate("picker");
+
+    // let grossAmount = 0;
+    // let collectedAmount = 0;
+    // let deductions = 0;
+    // const groupedByPicker = groupBy(data, (data: { picker: any }) =>
+    //   data.picker?._id.toString()
+    // );
+
+    // const details = Object.keys(groupedByPicker)
+    //   .filter((picker) => picker !== "undefined")
+    //   .map((pickerId) =>
+    //     groupedByPicker[pickerId].reduce(
+    //       (prev, curr: any) => {
+    //         return {
+    //           picker: {
+    //             id: pickerId,
+    //             name: curr.picker?.name,
+    //           },
+    //           collectedAmount: prev.collectedAmount + curr.collectedAmount,
+    //           deductions: 0,
+    //           grossAmount:
+    //             prev.grossAmount + curr.collectedAmount * season?.price,
+    //           netAmount:
+    //             prev.grossAmount + curr.collectedAmount * season?.price,
+    //         };
+    //       },
+    //       { collectedAmount: 0, grossAmount: 0, netAmount: 0 }
+    //     )
+    //   );
+    // const pickersCount = details.length;
+
+    // data.forEach((harvestLog) => {
+    //   collectedAmount += harvestLog.collectedAmount;
+    //   grossAmount += harvestLog.collectedAmount * season?.price;
+    //   // deductions = 0
+    // });
+
+    // const expected = [expectedTotal.totalCollectedAmount, expectedTotal.totalDeductions, expectedTotal.totalGrossAmount]
+    //   .map(Number)
+    //   .reduce((prev, curr) => prev + curr, 0);
+
+    // const calculated = [totals.collectedAmount , totals.deductions, totals.grossAmount].reduce(
+    //   (prev, curr) => prev + curr,
+    //   0
+    // );
+    console.log({ expectedTotal });
+
+    console.log({ totals });
+    const validAmounts =
+      expectedTotal.totalCollectedAmount == totals.collectedAmount &&
+      expectedTotal.totalDeductions == totals.deductions &&
+      expectedTotal.totalGrossAmount == totals.grossAmount;
+    if (!validAmounts) {
+      throw new Error(`Totals don't match.`);
     }
 
     const session = await mongoose.startSession();
@@ -119,19 +280,12 @@ async function create(req: Request, res: Response, next: NextFunction) {
           startDate,
           endDate,
           pickersCount,
-          season: {
-            id: season._id,
-            name: season.name,
-            currency: season.currency.name,
-            price: season.price,
-            product: season.product.name,
-            unit: season.unit.name,
-          },
+          season,
           totals: {
-            netAmount: grossAmount - deductions,
-            collectedAmount,
-            grossAmount,
-            deductions,
+            netAmount: totals.grossAmount - totals.deductions,
+            collectedAmount: totals.collectedAmount,
+            grossAmount: totals.grossAmount,
+            deductions: totals.deductions,
           },
           details: details,
         });
@@ -155,7 +309,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
         } else {
           // Update the last payroll of the farm by season
           const farmPayrollUpdated = await FarmPayroll.findOneAndUpdate(
-            { farm: farmId, season: season._id },
+            { farm: farmId, season: season.id },
             {
               lastPayroll: payroll._id,
               nextEstimatedPayrollDate,
@@ -174,7 +328,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
 
         // Update harvest logs with a settled true
         await HarvestLog.updateMany(
-          { _id: { $in: data.map((harvestLog) => harvestLog._id) } },
+          { _id: { $in: harvestLogIds } },
           { $set: { settled: true } },
           { session }
         );
@@ -206,7 +360,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
     res.status(500).json({
       data: null,
       error: true,
-      message: `${message.create("error")} ${error?.message ?? ''}`,
+      message: `${message.create("error")} ${error?.message ?? ""}`,
     });
   }
 }
@@ -260,6 +414,7 @@ const payrollController = {
   create,
   getAll,
   getById,
+  getPreview,
 };
 
 export default payrollController;
