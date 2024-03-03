@@ -16,5 +16,4 @@ payrollRouter.get(`${paths.payroll}/:id`, payrollController.getById);
 // POST: /api/v1/payrolls
 payrollRouter.post(paths.payroll, payrollController.create);
 
-
 export default payrollRouter;

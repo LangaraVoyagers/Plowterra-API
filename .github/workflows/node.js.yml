@@ -13,29 +13,29 @@ jobs:
         node-version: [20.x]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci && npm run build
-    - run: cd ./dist
-    - name: serverless deploy --stage dev
-      if: github.ref == 'refs/heads/development'
-      uses: serverless/github-action@v3.2
-      with:
-        args: deploy --stage dev
-      
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci && npm run build
+      - run: cd ./dist
+      - name: serverless deploy --stage dev
+        if: github.ref == 'refs/heads/development'
+        uses: serverless/github-action@v3.2
+        with:
+          args: deploy --stage dev
 
-    - name: serverless deploy --stage prod
-      if: github.ref == 'refs/heads/main'
-      uses: serverless/github-action@v3.2
-      with:
-        args: deploy --stage prod
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
 
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+      - name: serverless deploy --stage prod
+        if: github.ref == 'refs/heads/main'
+        uses: serverless/github-action@v3.2
+        with:
+          args: deploy --stage prod
+
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY }}

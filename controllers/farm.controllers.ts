@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 
-import Farm from "../models/Farm";
 import farmMessage from "../messages/farm.messages";
+import Farm from "../models/Farm";
 
 // create farm
-async function create (req: Request, res: Response) {
+async function create(req: Request, res: Response) {
   try {
     const farm = new Farm({
       name: req.body?.name,
-      address: req.body?.address
+      address: req.body?.address,
     });
 
     const savedFarm = await farm.save();
@@ -16,37 +16,36 @@ async function create (req: Request, res: Response) {
     res.status(201).json({
       message: farmMessage.FARM_CREATE_SUCCESS,
       data: savedFarm,
-      error: false
+      error: false,
     });
-    
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       message: farmMessage.FARM_CREATE_ERROR,
       data: null,
-      error: true
+      error: true,
     });
   }
 }
 
 // get all farms
-async function getAll (req: Request, res: Response) {
+async function getAll(req: Request, res: Response) {
   try {
     const farms = await Farm.find({})
       .populate({
         path: "users",
         model: "User",
-        select: "-token"
+        select: "-token",
       })
       .exec();
-    
+
     // no farms exist
     if (!farms.length) {
       res.status(200).json({
         message: farmMessage.NOT_FOUND,
         data: null,
-        error: false
+        error: false,
       });
 
       return;
@@ -55,37 +54,36 @@ async function getAll (req: Request, res: Response) {
     res.status(200).json({
       message: farmMessage.SUCCESS,
       data: farms,
-      error: false
+      error: false,
     });
-    
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       message: farmMessage.ERROR,
       data: null,
-      error: true
+      error: true,
     });
   }
 }
 
 // get farm by Id
-async function getById (req: Request, res: Response) {
+async function getById(req: Request, res: Response) {
   try {
     const farm = await Farm.findById(req.params?.id)
       .populate({
         path: "users",
         model: "User",
-        select: "-token"
+        select: "-token",
       })
       .exec();
-    
+
     // not found
     if (!farm) {
       res.status(200).json({
         message: farmMessage.NOT_FOUND,
         data: null,
-        error: false
+        error: false,
       });
 
       return;
@@ -94,29 +92,28 @@ async function getById (req: Request, res: Response) {
     res.status(200).json({
       message: farmMessage.SUCCESS,
       data: farm,
-      error: false
+      error: false,
     });
-    
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       message: farmMessage.ERROR,
       data: null,
-      error: true
+      error: true,
     });
   }
 }
 
 // update farm
-async function updateById (req: Request, res: Response) {
+async function updateById(req: Request, res: Response) {
   try {
     const updatedFarm = await Farm.findByIdAndUpdate(
       { _id: req.params?.id },
-      { 
-        name: req.body?.name, 
+      {
+        name: req.body?.name,
         address: req.body?.address,
-        isDisabled: req.body?.isDisabled 
+        isDisabled: req.body?.isDisabled,
       },
       { returnDocument: "after", runValidators: true }
     ).exec();
@@ -124,22 +121,21 @@ async function updateById (req: Request, res: Response) {
     res.status(200).json({
       message: farmMessage.FARM_UPDATE_SUCCESS,
       data: updatedFarm,
-      error: false
+      error: false,
     });
-    
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       message: farmMessage.FARM_UPDATE_ERROR,
       data: null,
-      error: true
+      error: true,
     });
   }
 }
 
 // delete farm
-async function deleteById (req: Request, res: Response) {
+async function deleteById(req: Request, res: Response) {
   try {
     const updatedFarm = await Farm.findByIdAndUpdate(
       { _id: req.params?.id },
@@ -150,16 +146,15 @@ async function deleteById (req: Request, res: Response) {
     res.status(200).json({
       message: farmMessage.FARM_DELETE_SUCCESS,
       data: updatedFarm,
-      error: false
+      error: false,
     });
-    
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       message: farmMessage.FARM_DELETE_ERROR,
       data: null,
-      error: true
+      error: true,
     });
   }
 }

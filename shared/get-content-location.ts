@@ -5,4 +5,3 @@ const getContentLocation = (req: Request, id: any) => {
 };
 
 export default getContentLocation;
-

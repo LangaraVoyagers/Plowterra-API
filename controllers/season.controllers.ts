@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
-import Season from "../models/Season";
-import { StatusEnum } from "../models/Season";
-import getContentLocation from "../shared/get-content-location";
-import Message from "../shared/Message";
 import { ISeasonDeductionSchema } from "../interfaces/season.interface";
+import Season, { StatusEnum } from "../models/Season";
+import Message from "../shared/Message";
+import getContentLocation from "../shared/get-content-location";
 
 const message = new Message("harvest season");
 

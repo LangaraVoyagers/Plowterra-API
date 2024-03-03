@@ -1,8 +1,14 @@
 import express from "express";
-import { createPicker, getPicker, getAllPickers, updatePicker, softDeletePicker } from '../controllers/picker.controllers';
+import {
+  createPicker,
+  getAllPickers,
+  getPicker,
+  softDeletePicker,
+  updatePicker,
+} from "../controllers/picker.controllers";
 import paths from "../shared/paths";
 
-const router = express.Router()
+const router = express.Router();
 
 // POST: /api/v1/pickers
 router.post(paths.picker, createPicker);

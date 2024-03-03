@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 import Product from "../models/Products";
-import getContentLocation from "../shared/get-content-location";
 import Message from "../shared/Message";
+import getContentLocation from "../shared/get-content-location";
 
 const message = new Message("picker");
 

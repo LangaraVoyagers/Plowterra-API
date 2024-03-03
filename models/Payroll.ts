@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
 import {
-  IPayrollSchema,
+  IFarmPayrollSchema,
   IPayrollDetailSchema,
   IPayrollPickerSchema,
+  IPayrollSchema,
   IPayrollSeasonSchema,
-  IFarmPayrollSchema,
 } from "../interfaces/payroll.interface";
 import { AuditSchema } from "./Audit";
 
@@ -58,6 +58,5 @@ export const FarmPayroll = model<IFarmPayrollSchema>(
     nextEstimatedPayrollDate: { type: Number, required: true },
   })
 );
-
 
 export default Payroll;
