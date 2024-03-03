@@ -60,7 +60,6 @@ Will contain all the shared helper functions
 
 - [typescript](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [mongoose](https://mongoosejs.com/docs/)
-- [appwrite jwt](https://appwrite.io/docs/products/auth/jwt)
 - [swagger blog](https://rajputankit22.medium.com/how-to-add-swagger-to-nodejs-rest-api-7caa870741be)
 - [express structure blog](https://medium.com/codechef-vit/a-better-project-structure-with-express-and-node-js-c23abc2d736f)
 
