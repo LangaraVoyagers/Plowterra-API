@@ -120,6 +120,7 @@ const getById = async (req: Request, res: Response) => {
       _id: req.params?.id,
       deletedAt: null,
     })
+      .select("+createdAt")
       .populate(populateQuery)
       .exec();
 
