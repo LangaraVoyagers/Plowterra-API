@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
-import { IUserSchema } from "../interfaces/user.interface";
 import { hash } from "bcrypt";
+import { IUserSchema } from "../interfaces/user.interface";
 
 const UserSchema = new Schema({
   name: { type: String, required: true },
@@ -9,13 +9,13 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   farm: { type: Schema.Types.ObjectId, ref: "Farm", required: true },
   token: { type: String, default: null },
-  isDisabled: { type: Boolean, default: false },})
-  .pre("save", async function (next) {
-    // hash the password with salt
-    const hashedPassword = await hash(this.password, 10);
-    // assign the hashed password to this field
-    this.password = hashedPassword;
-    next();
+  isDisabled: { type: Boolean, default: false },
+}).pre("save", async function (next) {
+  // hash the password with salt
+  const hashedPassword = await hash(this.password, 10);
+  // assign the hashed password to this field
+  this.password = hashedPassword;
+  next();
 });
 
 // hide password when converting to JSON
@@ -23,7 +23,7 @@ UserSchema.methods.toJSON = function () {
   const userObject = this.toObject();
   delete userObject.password;
   return userObject;
-}
+};
 
 const User = model<IUserSchema>("User", UserSchema);
 

@@ -13,5 +13,4 @@ payrollRouter.get(`${paths.payroll}/:id`, payrollController.getById);
 // POST: /api/v1/harvest-logs
 payrollRouter.post(paths.payroll, payrollController.create);
 
-
 export default payrollRouter;

@@ -7,12 +7,12 @@ provider:
 functions:
   app:
     handler: dist/app.handler
-    events: 
-      - http: 
+    events:
+      - http:
           path: /
           method: any
           cors: true
-      - http: 
+      - http:
           path: /{proxy+}
           method: any
           cors: true

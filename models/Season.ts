@@ -1,15 +1,15 @@
-import { Model, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import {
-  ISeasonSchema,
   ISeasonDeductionSchema,
+  ISeasonSchema,
 } from "../interfaces/season.interface";
-import { AuditSchema } from "./Audit";
 import seasonMessages from "../messages/season.messages";
-import Product from "./Products";
-import Unit from "./Unit";
+import { AuditSchema } from "./Audit";
 import Currency from "./Currency";
 import Deduction from "./Deduction";
 import Farm from "./Farm";
+import Product from "./Products";
+import Unit from "./Unit";
 
 enum PayrollTimeframeEnum {
   WEEKLY = "Weekly",

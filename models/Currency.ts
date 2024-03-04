@@ -1,4 +1,4 @@
-import { Schema, SchemaDefinition, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { ICurrency } from "../interfaces/currency.interface";
 import { AuditSchema } from "./Audit";
 

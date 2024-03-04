@@ -8,6 +8,6 @@ const farmMessage = {
   ERROR: "Some error occurred, try again later",
   SUCCESS: "Found record",
   NOT_FOUND: "No record was found",
-}
+};
 
 export default farmMessage;
