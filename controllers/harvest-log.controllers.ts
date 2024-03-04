@@ -90,7 +90,16 @@ const create = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const harvestLogs = await HarvestLog.find({ deletedAt: null })
+    const settled = req.query.settled ?? undefined;
+    const seasonId = req.query.seasonId ?? undefined;
+
+    const harvestLogs = await HarvestLog.find({
+      $and: [
+        { deletedAt: null },
+        ...(settled ? [{ settled }] : []),
+        ...(seasonId ? [{ season: seasonId }] : []),
+      ],
+    })
       .sort({ createdAt: "desc" })
       .select("+createdAt")
       .populate(populateQuery)
@@ -108,7 +117,7 @@ const getAll = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      message: harvestLogMessage.SUCCESS,
+      message: `${harvestLogs.length} records found`,
       data: harvestLogs,
       error: false,
     });
