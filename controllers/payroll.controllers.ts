@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import floor from "lodash/floor";
 import groupBy from "lodash/groupBy";
 import mongoose from "mongoose";
 import HarvestLog from "../models/HarvestLog";
@@ -74,12 +75,19 @@ async function getProductionData(payload: ProductionRequest) {
                 id: pickerId,
                 name: curr.picker?.name,
               },
-              collectedAmount: prev.collectedAmount + curr.collectedAmount,
+              collectedAmount: floor(
+                prev.collectedAmount + curr.collectedAmount,
+                2
+              ),
               deductions: 0,
-              grossAmount:
+              grossAmount: floor(
                 prev.grossAmount + curr.collectedAmount * season?.price,
-              netAmount:
+                2
+              ),
+              netAmount: floor(
                 prev.grossAmount + curr.collectedAmount * season?.price,
+                2
+              ),
             };
           },
           { collectedAmount: 0, grossAmount: 0, netAmount: 0 }
@@ -108,10 +116,10 @@ async function getProductionData(payload: ProductionRequest) {
         unit: season.unit.name,
       },
       totals: {
-        netAmount: grossAmount - deductions,
-        collectedAmount,
-        grossAmount,
-        deductions,
+        netAmount: floor(grossAmount - deductions, 2),
+        collectedAmount: floor(collectedAmount, 2),
+        grossAmount: floor(grossAmount, 2),
+        deductions: floor(deductions, 2),
       },
       lastPayroll,
       harvestLogIds: data.map((harvestLog) => harvestLog._id),
@@ -214,6 +222,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
         // Calculating next payroll date for this season
         const payrollEndDate = new Date(Number(endDate));
         payrollEndDate.setDate(payrollEndDate.getDate() + 1);
+        payrollEndDate.setHours(0, 0, 0, 0);
         const nextEstimatedPayrollDate = payrollEndDate.getTime();
 
         if (!lastPayroll) {
