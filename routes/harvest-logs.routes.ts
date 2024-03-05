@@ -1,7 +1,7 @@
 import express from "express";
-import { harvestLogValidator } from "project-2-types/lib/harvestLog.ajv";
 import harvestController from "../controllers/harvest-log.controllers";
 import paths from "../shared/paths";
+import harvestLogValidator from "../shared/validators";
 const harvestLogRouter = express.Router();
 
 // POST: /api/v1/harvest-logs
