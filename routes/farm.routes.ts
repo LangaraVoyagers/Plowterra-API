@@ -19,4 +19,10 @@ farmRouter.put(`${paths.farm}/:id`, farmController.updateById);
 // DELETE: /api/v1/farms/:id
 farmRouter.delete(`${paths.farm}/:id`, farmController.deleteById);
 
+// GET: /api/v1/farms/:id/lastpayrolls
+farmRouter.get(
+  `${paths.farm}/:id/lastpayrolls`,
+  farmController.getLastPayrolls
+);
+
 export default farmRouter;

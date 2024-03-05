@@ -14,7 +14,16 @@ const populateQuery = [
         path: "product",
         model: "Product",
       },
+      {
+        path: "unit",
+        model: "Unit",
+      },
+      {
+        path: "currency",
+        model: "Currency",
+      },
     ],
+    select: "-hasHarvestLog",
   },
   "picker",
   "seasonDeductions",
@@ -81,10 +90,19 @@ const create = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const harvestLogs = await HarvestLog.find({ deletedAt: null })
+    const settled = req.query.settled ?? undefined;
+    const seasonId = req.query.seasonId ?? undefined;
+
+    const harvestLogs = await HarvestLog.find({
+      $and: [
+        { deletedAt: null },
+        ...(settled ? [{ settled }] : []),
+        ...(seasonId ? [{ season: seasonId }] : []),
+      ],
+    })
       .sort({ createdAt: "desc" })
-      .populate(populateQuery)
       .select("+createdAt")
+      .populate(populateQuery)
       .exec();
 
     // no records
@@ -99,7 +117,7 @@ const getAll = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      message: harvestLogMessage.SUCCESS,
+      message: `${harvestLogs.length} records found`,
       data: harvestLogs,
       error: false,
     });

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import farmMessage from "../messages/farm.messages";
 import Farm from "../models/Farm";
+import { FarmPayroll } from "../models/Payroll";
 
 // create farm
 async function create(req: Request, res: Response) {
@@ -159,12 +160,38 @@ async function deleteById(req: Request, res: Response) {
   }
 }
 
+async function getLastPayrolls(req: Request, res: Response) {
+  const farmId = req.params.id;
+  const seasonId = req.query.seasonId ?? undefined;
+
+  try {
+    const data = await FarmPayroll.find({
+      $and: [{ farm: farmId }, ...(seasonId ? [{ season: seasonId }] : [])],
+    }).exec();
+
+    res.status(200).json({
+      message: `${data.length} record(s) found`,
+      data,
+      error: false,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: farmMessage.ERROR,
+      data: null,
+      error: true,
+    });
+  }
+}
+
 const farmController = {
   create,
   getAll,
   getById,
   updateById,
   deleteById,
+  getLastPayrolls,
 };
 
 export default farmController;
