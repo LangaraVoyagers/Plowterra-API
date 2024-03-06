@@ -66,6 +66,7 @@ export function getPicker(req: Request, res: Response) {
 
 export function getAllPickers(req: Request, res: Response) {
   Picker.find({ deletedAt: null })
+    .select("+createdAt")
     .sort({ createdAt: "desc" })
     .then((data) => {
       res.status(200).json({
