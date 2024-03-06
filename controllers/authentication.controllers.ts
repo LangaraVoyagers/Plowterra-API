@@ -51,7 +51,7 @@ async function signUp(req: Request, res: Response) {
       .populate({
         path: "farm",
         model: "Farm",
-        select: "-users",
+        select: "-userIds -users",
       })
       .select("-token")
       .exec();
@@ -80,7 +80,7 @@ async function signIn(req: Request, res: Response) {
       .populate({
         path: "farm",
         model: "Farm",
-        select: "-users",
+        select: "-userIds -users",
       })
       .exec();
 
@@ -166,9 +166,15 @@ async function signIn(req: Request, res: Response) {
       { returnDocument: "after", runValidators: true }
     ).exec();
 
-    res.status(201).json({
+    res.status(200).json({
       message: userMessage.USER_LOGIN_SUCCESS,
-      data: { token: updatedUser?.token },
+      data: {
+        token: updatedUser?.token,
+        user: {
+          name: user.name,
+          farm: user.farm,
+        },
+      },
       error: false,
     });
   } catch (error) {
