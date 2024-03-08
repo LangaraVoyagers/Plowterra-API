@@ -92,12 +92,14 @@ const getAll = async (req: Request, res: Response) => {
   try {
     const settled = req.query.settled ?? undefined;
     const seasonId = req.query.seasonId ?? undefined;
+    const pickerId = req.query.pickerId ?? undefined;
 
     const harvestLogs = await HarvestLog.find({
       $and: [
         { deletedAt: null },
         ...(settled ? [{ settled }] : []),
         ...(seasonId ? [{ season: seasonId }] : []),
+        ...(pickerId ? [{ picker: pickerId }] : []),
       ],
     })
       .sort({ createdAt: "desc" })
