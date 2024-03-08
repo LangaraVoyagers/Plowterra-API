@@ -1,5 +1,5 @@
 import express from "express";
-import schema from "project-2-types/lib/pickers.ajv";
+import PickerSchema from "project-2-types/dist/ajv/picker.ajv";
 import {
   createPicker,
   getAllPickers,
@@ -13,7 +13,7 @@ import validator from "../shared/validators";
 const router = express.Router();
 
 // POST: /api/v1/pickers
-router.post(paths.picker, validator(schema), createPicker);
+router.post(paths.picker, validator(PickerSchema), createPicker);
 
 // GET: /api/v1/pickers
 router.get(paths.picker, getAllPickers);
