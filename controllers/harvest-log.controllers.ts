@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import { MongooseError } from "mongoose";
 import harvestLogMessage from "../messages/harvest-log.messages";
 import HarvestLog from "../models/HarvestLog";
-import Picker from "../models/Picker";
 import { compareDates } from "../shared/date.helpers";
 
 const populateQuery = [
@@ -58,20 +57,6 @@ const create = async (req: Request, res: Response) => {
     const savedHarvestLog = await (
       await harvestLog.save()
     ).populate(populateQuery);
-
-    // get picker from saved log
-    const { picker } = savedHarvestLog as any;
-
-    // update picker with harvest log id
-    await Picker.findOneAndUpdate(
-      {
-        _id: picker._id,
-        deletedAt: null,
-      },
-      {
-        $push: { harvestLogs: savedHarvestLog._id },
-      }
-    );
 
     // return the response
     res.status(201).json({
@@ -321,20 +306,6 @@ const deleteById = async (req: Request, res: Response) => {
     )
       .populate(populateQuery)
       .exec();
-
-    // get picker from updated log
-    const { picker } = updatedHarvestLog as any;
-
-    // remove harvest log from picker
-    await Picker.findOneAndUpdate(
-      {
-        _id: picker._id,
-        deletedAt: null,
-      },
-      {
-        $pull: { harvestLogs: updatedHarvestLog?._id },
-      }
-    );
 
     res.status(200).json({
       message: harvestLogMessage.HARVEST_LOG_DELETE_SUCCESS,
