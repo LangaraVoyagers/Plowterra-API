@@ -1,4 +1,5 @@
 import express from "express";
+import PickerSchema from "project-2-types/dist/ajv/picker.ajv";
 import {
   createPicker,
   getAllPickers,
@@ -7,11 +8,12 @@ import {
   updatePicker,
 } from "../controllers/picker.controllers";
 import paths from "../shared/paths";
+import validator from "../shared/validators";
 
 const router = express.Router();
 
 // POST: /api/v1/pickers
-router.post(paths.picker, createPicker);
+router.post(paths.picker, validator(PickerSchema), createPicker);
 
 // GET: /api/v1/pickers
 router.get(paths.picker, getAllPickers);
