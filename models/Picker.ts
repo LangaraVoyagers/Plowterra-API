@@ -1,13 +1,13 @@
+import mongoose, { Schema } from "mongoose";
 import {
   BloodType,
   IPicker,
   IPickerContact,
   Relationship,
 } from "project-2-types/dist/interface";
-import mongoose, { Schema } from "mongoose";
 
-import { AuditSchema } from "./Audit";
 import { IAuditSchema } from "../interfaces/shared.interface";
+import { AuditSchema } from "./Audit";
 
 export interface IPickerSchema extends IAuditSchema, IPicker {}
 
