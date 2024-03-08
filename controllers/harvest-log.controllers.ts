@@ -27,10 +27,48 @@ const populateQuery = [
   },
   "picker",
   "seasonDeductions",
+  {
+    path: "correctionLogs",
+    model: "HarvestLog",
+    populate: [
+      {
+        path: "season",
+        model: "Season",
+      },
+    ],
+    select: ["-correctionLogs", "+createdAt"],
+  },
 ];
 
 const create = async (req: Request, res: Response) => {
   try {
+    const parentId = req.params?.id;
+
+    // check for parent log for creating correction log
+    if (parentId) {
+      const parentLog = await HarvestLog.findOne({
+        _id: parentId,
+        deletedAt: null,
+        parentId: null,
+      })
+        .populate(populateQuery)
+        .select("+createdAt")
+        .exec();
+
+      // TODO: check if pickerId, seasonId match the parent log
+
+      // parent harvest log doesnot exist
+      if (!parentLog) {
+        res.status(404).json({
+          message: harvestLogMessage.NOT_FOUND,
+          data: null,
+          error: false,
+        });
+
+        return;
+      }
+    }
+
     // check if collectedAmount is a number
     if (isNaN(req.body?.collectedAmount)) {
       res.status(403).json({
@@ -44,6 +82,7 @@ const create = async (req: Request, res: Response) => {
 
     // create a new harvest log
     const harvestLog = new HarvestLog({
+      parentId: parentId,
       season: req.body?.seasonId,
       picker: req.body?.pickerId,
       collectedAmount: Number(req.body?.collectedAmount),
@@ -57,6 +96,18 @@ const create = async (req: Request, res: Response) => {
     const savedHarvestLog = await (
       await harvestLog.save()
     ).populate(populateQuery);
+
+    // update the parent log to contain the correction log
+    if (parentId) {
+      await HarvestLog.findByIdAndUpdate(parentId, {
+        $push: {
+          correctionLogs: savedHarvestLog._id,
+        },
+      })
+        .populate(populateQuery)
+        .select("+createdAt")
+        .exec();
+    }
 
     // return the response
     res.status(201).json({
@@ -97,6 +148,7 @@ const getAll = async (req: Request, res: Response) => {
     const harvestLogs = await HarvestLog.find({
       $and: [
         { deletedAt: null },
+        { parentId: null },
         ...(settled ? [{ settled }] : []),
         ...(seasonId ? [{ season: seasonId }] : []),
         ...(pickerId ? [{ picker: pickerId }] : []),

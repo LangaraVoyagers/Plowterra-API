@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+
 import { IDeductionSchema } from "../interfaces/deduction.interface";
 import { AuditSchema } from "./Audit";
 

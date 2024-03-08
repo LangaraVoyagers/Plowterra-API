@@ -54,6 +54,12 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
     ref: "Deduction",
     default: [],
   },
+  correctionLogs: {
+    type: [Schema.Types.ObjectId],
+    ref: "HarvestLog",
+    default: [],
+  },
+  parentId: { type: Schema.Types.ObjectId, default: null },
   notes: { type: String },
   settled: { type: Boolean, default: false },
   ...AuditSchema,
@@ -92,21 +98,42 @@ HarvestLogSchema.virtual("totalDeduction").get(function () {
   let totalDeduction = 0;
   const season = this.season as unknown as ISeasonSchema;
 
-  this.seasonDeductions?.forEach(({ _id }: any) => {
-    const matchingDeduction = season?.deductions?.find((pd: any) => {
-      return pd.deductionID.equals(_id);
-    });
+  const calculateSeasonDeductions = (
+    seasonDeductions: Array<Schema.Types.ObjectId>,
+    season: any
+  ) => {
+    seasonDeductions?.forEach(({ _id }: any) => {
+      let matchingDeduction;
+      matchingDeduction = season?.deductions?.find((pd: any) => {
+        return pd.deductionID.equals(_id);
+      });
 
-    if (matchingDeduction) {
-      totalDeduction += matchingDeduction?.price;
-    }
+      if (matchingDeduction) {
+        totalDeduction += matchingDeduction?.price;
+      }
+    });
+  };
+
+  calculateSeasonDeductions(this.seasonDeductions, season);
+
+  this.correctionLogs?.forEach(({ seasonDeductions }: any) => {
+    calculateSeasonDeductions(seasonDeductions, season);
   });
 
   return totalDeduction;
 });
 
 // populate virtual fields when converting to JSON
-HarvestLogSchema.set("toJSON", { virtuals: true });
+HarvestLogSchema.set("toObject", { virtuals: true });
+
+HarvestLogSchema.methods.toJSON = function () {
+  const harvestLogObject = this.toObject();
+  // remove correction logs that have been deleted
+  harvestLogObject.correctionLogs = harvestLogObject.correctionLogs.filter(
+    (log: { deletedAt: any }) => !log.deletedAt
+  );
+  return harvestLogObject;
+};
 
 const HarvestLog = model<IHarvestLogSchema>("HarvestLog", HarvestLogSchema);
 

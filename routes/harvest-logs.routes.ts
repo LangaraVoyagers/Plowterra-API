@@ -1,13 +1,12 @@
 import express from "express";
 import harvestController from "../controllers/harvest-log.controllers";
 import paths from "../shared/paths";
-import harvestLogValidator from "../shared/validators";
 const harvestLogRouter = express.Router();
 
-// POST: /api/v1/harvest-logs
+// POST: /api/v1/harvest-logs:id
 harvestLogRouter.post(
-  paths.harvestLog,
-  harvestLogValidator,
+  [paths.harvestLog, `${paths.harvestLog}/:id`],
+  // TODO: add validations
   harvestController.create
 );
 
