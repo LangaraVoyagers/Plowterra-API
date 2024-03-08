@@ -35,8 +35,6 @@ const PickerSchema: Schema = new Schema<IPickerSchema>({
   ...AuditSchema,
 });
 
-// TODO: call this method for getAll, getById etc
-// 'hasHarvestLog' flag set
 PickerSchema.methods.populateHasHarvestLog = async function () {
   const picker = this.toJSON();
   const harvestLog = await HarvestLog.findOne({

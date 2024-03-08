@@ -117,8 +117,7 @@ export async function softDeletePicker(req: Request, res: Response) {
   try {
     const id = req?.params?.id;
     const picker = await Picker.findById(id).exec();
-    // TODO: add this to the types
-    const { hasHarvestLog } = picker?.toJSON() as any;
+    const hasHarvestLog = (picker as any)?.populateHasHarvestLog();
 
     if (hasHarvestLog) {
       return res.status(200).json({
