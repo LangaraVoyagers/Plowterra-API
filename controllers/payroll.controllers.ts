@@ -51,11 +51,12 @@ async function getProductionData(payload: ProductionRequest) {
     const data = await HarvestLog.find({
       deletedAt: null,
       season: season?._id,
+      settled: false,
       createdAt: {
         $gte: startDate,
         $lte: endDate,
       },
-    }).populate("picker");
+    }).populate(["picker", "seasonDeductions"]);
 
     let grossAmount = 0;
     let collectedAmount = 0;
@@ -70,6 +71,21 @@ async function getProductionData(payload: ProductionRequest) {
       .map((pickerId) =>
         groupedByPicker[pickerId].reduce(
           (prev, curr: any) => {
+            let pickerDeductions = 0;
+            curr.seasonDeductions?.forEach(({ _id }: any) => {
+              const matchingDeduction = season?.deductions?.find((pd: any) => {
+                return pd.deductionID.equals(_id);
+              });
+
+              if (matchingDeduction) {
+                pickerDeductions += matchingDeduction?.price;
+              }
+            });
+
+            const gAmount = floor(
+              prev.grossAmount + curr.collectedAmount * season?.price,
+              2
+            );
             return {
               picker: {
                 id: pickerId,
@@ -79,18 +95,12 @@ async function getProductionData(payload: ProductionRequest) {
                 prev.collectedAmount + curr.collectedAmount,
                 2
               ),
-              deductions: 0,
-              grossAmount: floor(
-                prev.grossAmount + curr.collectedAmount * season?.price,
-                2
-              ),
-              netAmount: floor(
-                prev.grossAmount + curr.collectedAmount * season?.price,
-                2
-              ),
+              deductions: floor(pickerDeductions, 2),
+              grossAmount: gAmount,
+              netAmount: floor(gAmount - pickerDeductions, 2),
             };
           },
-          { collectedAmount: 0, grossAmount: 0, netAmount: 0 }
+          { collectedAmount: 0, grossAmount: 0, netAmount: 0, deductions: 0 }
         )
       );
 
@@ -99,8 +109,11 @@ async function getProductionData(payload: ProductionRequest) {
     data.forEach((harvestLog) => {
       collectedAmount += harvestLog.collectedAmount;
       grossAmount += harvestLog.collectedAmount * season?.price;
-      // deductions = 0
     });
+
+    deductions = details.reduce((prev, curr) => {
+      return prev + curr.deductions;
+    }, 0);
 
     return {
       farmId,
