@@ -46,9 +46,6 @@ PickerSchema.methods.populateHasHarvestLog = async function () {
   return picker;
 };
 
-// populate virtual fields when converting to JSON
-PickerSchema.set("toJSON", { virtuals: true });
-
 const Picker = mongoose.model<IPickerSchema>("Picker", PickerSchema);
 
 export default Picker;
