@@ -5,10 +5,14 @@ import {
   IPickerContact,
   Relationship,
 } from "project-2-types/lib/pickers";
+
 import { IAuditSchema } from "../interfaces/shared.interface";
 import { AuditSchema } from "./Audit";
 
-export interface IPickerSchema extends IAuditSchema, IPicker {}
+export interface IPickerSchema extends IAuditSchema, IPicker {
+  // TODO: move this to the types package
+  harvestLogs: Array<Schema.Types.ObjectId>;
+}
 
 const PickerSchema: Schema = new Schema<IPickerSchema>({
   name: { type: String, required: true, maxlength: 40 },
@@ -30,8 +34,22 @@ const PickerSchema: Schema = new Schema<IPickerSchema>({
     startDate: { type: Number, default: Date.now },
     endDate: { type: Number },
   },
+  harvestLogs: {
+    type: [Schema.Types.ObjectId],
+    ref: "HarvestLog",
+    default: [],
+  },
   ...AuditSchema,
 });
+
+// 'hasHarvestLog' virtual field
+PickerSchema.virtual("hasHarvestLog").get(function () {
+  const harvestLogs = this.harvestLogs as Array<Schema.Types.ObjectId>;
+  return !!harvestLogs.length;
+});
+
+// populate virtual fields when converting to JSON
+PickerSchema.set("toJSON", { virtuals: true });
 
 const Picker = mongoose.model<IPickerSchema>("Picker", PickerSchema);
 
