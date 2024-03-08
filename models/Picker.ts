@@ -8,11 +8,9 @@ import {
 
 import { IAuditSchema } from "../interfaces/shared.interface";
 import { AuditSchema } from "./Audit";
+import HarvestLog from "./HarvestLog";
 
-export interface IPickerSchema extends IAuditSchema, IPicker {
-  // TODO: move this to the types package
-  harvestLogs: Array<Schema.Types.ObjectId>;
-}
+export interface IPickerSchema extends IAuditSchema, IPicker {}
 
 const PickerSchema: Schema = new Schema<IPickerSchema>({
   name: { type: String, required: true, maxlength: 40 },
@@ -34,19 +32,21 @@ const PickerSchema: Schema = new Schema<IPickerSchema>({
     startDate: { type: Number, default: Date.now },
     endDate: { type: Number },
   },
-  harvestLogs: {
-    type: [Schema.Types.ObjectId],
-    ref: "HarvestLog",
-    default: [],
-  },
   ...AuditSchema,
 });
 
-// 'hasHarvestLog' virtual field
-PickerSchema.virtual("hasHarvestLog").get(function () {
-  const harvestLogs = this.harvestLogs as Array<Schema.Types.ObjectId>;
-  return !!harvestLogs.length;
-});
+// TODO: call this method for getAll, getById etc
+// 'hasHarvestLog' flag set
+PickerSchema.methods.populateHasHarvestLog = async function () {
+  const picker = this.toJSON();
+  const harvestLog = await HarvestLog.findOne({
+    picker: this._id,
+    deletedAt: null,
+  });
+
+  picker.hasHarvestLog = !!harvestLog;
+  return picker;
+};
 
 // populate virtual fields when converting to JSON
 PickerSchema.set("toJSON", { virtuals: true });
