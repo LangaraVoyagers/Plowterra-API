@@ -8,8 +8,9 @@ const harvestLogRouter = express.Router();
 
 // POST: /api/v1/harvest-logs:id
 harvestLogRouter.post(
-  paths.harvestLog,
-  harvestLogValidator(HarvestLogSchema),
+  [paths.harvestLog, `${paths.harvestLog}/:id`],
+  // TODO: make changes to validation
+  // harvestLogValidator(HarvestLogSchema),
   harvestController.create
 );
 
