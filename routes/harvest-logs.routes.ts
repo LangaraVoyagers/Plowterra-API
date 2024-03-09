@@ -1,15 +1,16 @@
-import express from "express";
 import HarvestLogSchema from "project-2-types/dist/ajv/harvest-log.ajv";
+import express from "express";
 import harvestController from "../controllers/harvest-log.controllers";
-import paths from "../shared/paths";
 import harvestLogValidator from "../shared/validators";
+import paths from "../shared/paths";
 
 const harvestLogRouter = express.Router();
 
-// POST: /api/v1/harvest-logs
+// POST: /api/v1/harvest-logs:id
 harvestLogRouter.post(
-  paths.harvestLog,
-  harvestLogValidator(HarvestLogSchema),
+  [paths.harvestLog, `${paths.harvestLog}/:id`],
+  // TODO: make changes to validation
+  // harvestLogValidator(HarvestLogSchema),
   harvestController.create
 );
 
