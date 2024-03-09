@@ -36,8 +36,8 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
     ref: "Picker",
     required: [true, harvestLogMessage.INVALID_PICKER_ID],
     validate: {
-      validator: (pickerId: string) =>
-        !!Picker.findOne({ _id: pickerId, deletedAt: null }),
+      validator: async (pickerId: string) =>
+        !!(await Picker.findOne({ _id: pickerId, deletedAt: null }).exec()),
       message: harvestLogMessage.INVALID_PICKER_ID,
     },
   },

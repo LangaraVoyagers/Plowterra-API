@@ -8,6 +8,7 @@ import {
 
 import { IAuditSchema } from "../interfaces/shared.interface";
 import { AuditSchema } from "./Audit";
+import HarvestLog from "./HarvestLog";
 
 export interface IPickerSchema extends IAuditSchema, IPicker {}
 
@@ -33,6 +34,17 @@ const PickerSchema: Schema = new Schema<IPickerSchema>({
   },
   ...AuditSchema,
 });
+
+PickerSchema.methods.populateHasHarvestLog = async function () {
+  const picker = this.toJSON();
+  const harvestLog = await HarvestLog.findOne({
+    picker: this._id,
+    deletedAt: null,
+  });
+
+  picker.hasHarvestLog = !!harvestLog;
+  return picker;
+};
 
 const Picker = mongoose.model<IPickerSchema>("Picker", PickerSchema);
 
