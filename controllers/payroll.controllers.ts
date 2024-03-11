@@ -117,6 +117,7 @@ async function getProductionData(payload: ProductionRequest) {
 
     return {
       farmId,
+      name: season.name,
       startDate,
       endDate,
       pickersCount,
