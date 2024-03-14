@@ -13,13 +13,13 @@ type ProductionRequest = {
   farmId: string;
   seasonId: string;
   endDate: number;
+  startDate?: number;
 };
 
 async function getProductionData(payload: ProductionRequest) {
   try {
     const { farmId, seasonId, endDate = Date.now() } = payload;
-
-    let startDate: null | number = null;
+    let { startDate } = payload;
 
     const season: any = await SeasonSchema.findOne({
       _id: seasonId,
@@ -33,20 +33,22 @@ async function getProductionData(payload: ProductionRequest) {
 
     const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
 
-    if (!lastPayroll) {
-      startDate = season?.startDate;
-    } else {
-      startDate = lastPayroll.nextEstimatedPayrollDate;
+    if (!startDate) {
+      if (!lastPayroll) {
+        startDate = season?.startDate;
+      } else {
+        startDate = lastPayroll.nextEstimatedPayrollDate;
+      }
     }
 
     // If the next payroll start date is greated than the current payrrol end date
-    if (!!lastPayroll && lastPayroll.nextEstimatedPayrollDate > endDate) {
-      throw new Error(
-        `Invalid end date, Next payroll date starts ${new Date(
-          lastPayroll.nextEstimatedPayrollDate
-        )}`
-      );
-    }
+    // if (!!lastPayroll && lastPayroll.nextEstimatedPayrollDate > endDate) {
+    //   throw new Error(
+    //     `Invalid end date, Next payroll date starts ${new Date(
+    //       lastPayroll.nextEstimatedPayrollDate
+    //     )}`
+    //   );
+    // }
 
     const data = await HarvestLog.find({
       deletedAt: null,
@@ -68,7 +70,7 @@ async function getProductionData(payload: ProductionRequest) {
 
     const details = Object.keys(groupedByPicker)
       .filter((picker) => picker !== "undefined")
-      .map((pickerId) =>
+      .map((pickerId, index) =>
         groupedByPicker[pickerId].reduce(
           (prev, curr: any) => {
             let pickerDeductions = 0;
@@ -87,6 +89,7 @@ async function getProductionData(payload: ProductionRequest) {
               2
             );
             return {
+              index,
               picker: {
                 id: pickerId,
                 name: curr.picker?.name,
@@ -123,10 +126,10 @@ async function getProductionData(payload: ProductionRequest) {
       season: {
         id: season._id,
         name: season.name,
-        currency: season.currency.name,
+        currency: season.currency?.name,
         price: season.price,
-        product: season.product.name,
-        unit: season.unit.name,
+        product: season.product?.name,
+        unit: season.unit?.name,
       },
       totals: {
         netAmount: floor(grossAmount - deductions, 2),
@@ -148,11 +151,13 @@ async function getPreview(req: Request, res: Response, next: NextFunction) {
     const farmId = req.body.farmId;
     const seasonId = req.body.seasonId;
     const endDate = req.body.endDate ?? Date.now();
+    const startDate = req.body.startDate;
 
     const data = await getProductionData({
       farmId,
       seasonId,
       endDate,
+      startDate,
     });
 
     res.status(200).json({
@@ -175,6 +180,8 @@ async function create(req: Request, res: Response, next: NextFunction) {
     const farmId = req.body.farmId;
     const seasonId = req.body.seasonId;
     const endDate = req.body.endDate ?? Date.now();
+    const startDate = req.body.startDate;
+
     const expectedTotal = {
       totalGrossAmount: req.body.totals?.totalGrossAmount ?? 0,
       totalCollectedAmount: req.body.totals?.totalCollectedAmount ?? 0,
@@ -185,10 +192,10 @@ async function create(req: Request, res: Response, next: NextFunction) {
       farmId,
       seasonId,
       endDate: endDate,
+      startDate,
     });
 
     const {
-      startDate,
       season,
       pickersCount,
       totals,
@@ -196,6 +203,14 @@ async function create(req: Request, res: Response, next: NextFunction) {
       lastPayroll,
       harvestLogIds,
     } = payrollData;
+
+    if (!details.length) {
+      return res.status(200).json({
+        data: payrollData,
+        error: false,
+        message: message.get("success"),
+      });
+    }
 
     const validAmounts =
       expectedTotal.totalCollectedAmount == totals.collectedAmount &&

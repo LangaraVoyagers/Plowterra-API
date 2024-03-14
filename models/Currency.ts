@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
-import { ICurrency } from "../interfaces/currency.interface";
+import { ICurrencySchema } from "../interfaces/currency.interface";
 import { AuditSchema } from "./Audit";
 
-const Currency = model<ICurrency>(
+const Currency = model<ICurrencySchema>(
   "Currency",
   new Schema({
     name: { type: String, required: true },
