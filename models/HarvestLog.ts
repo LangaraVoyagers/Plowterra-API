@@ -17,6 +17,7 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
         const season = await SeasonSchema.findOne({
           _id: seasonId,
           deletedAt: null,
+          startDate: { $lte: new Date().getTime() },
         });
         // if season doesnot exists
         if (!season) return false;

@@ -48,14 +48,14 @@ const create = async (req: Request, res: Response) => {
     if (parentId) {
       const parentLog = await HarvestLog.findOne({
         _id: parentId,
+        picker: req.body?.pickerId,
+        season: req.body?.seasonId,
         deletedAt: null,
         parentId: null,
       })
         .populate(populateQuery)
         .select("+createdAt")
         .exec();
-
-      // TODO: check if pickerId, seasonId match the parent log
 
       // parent harvest log doesnot exist
       if (!parentLog) {
@@ -171,7 +171,7 @@ const getAll = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      message: `${harvestLogs.length} records found`,
+      message: `${harvestLogs.length} record${harvestLogs.length > 1 ? "s" : ""} found`,
       data: harvestLogs,
       error: false,
     });
