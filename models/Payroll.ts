@@ -55,7 +55,10 @@ export const FarmPayroll = model<IFarmPayrollSchema>(
     farm: { type: Schema.Types.ObjectId, ref: "Farm" },
     season: { type: Schema.Types.ObjectId, ref: "Season" },
     lastPayroll: { type: Schema.Types.ObjectId, ref: "Payroll" },
-    nextEstimatedPayrollDate: { type: Number, required: true },
+    nextEstimatedPayroll: new Schema({
+      startDate: { type: Number, required: true },
+      endDate: { type: Number, required: true },
+    }),
   })
 );
 

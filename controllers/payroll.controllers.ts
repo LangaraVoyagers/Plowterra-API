@@ -6,6 +6,7 @@ import HarvestLog from "../models/HarvestLog";
 import Payroll, { FarmPayroll } from "../models/Payroll";
 import SeasonSchema from "../models/Season";
 import Message from "../shared/Message";
+import { calculatePayrollEndDate } from "../shared/date.helpers";
 
 const message = new Message("payroll");
 
@@ -37,7 +38,7 @@ async function getProductionData(payload: ProductionRequest) {
       if (!lastPayroll) {
         startDate = season?.startDate;
       } else {
-        startDate = lastPayroll.nextEstimatedPayrollDate;
+        startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
       }
     }
 
@@ -118,6 +119,17 @@ async function getProductionData(payload: ProductionRequest) {
       return prev + curr.deductions;
     }, 0);
 
+    const payrollStartDate = new Date(Number(startDate));
+    payrollStartDate.setHours(0, 0, 0, 0);
+
+    const nextEstimatedPayroll = {
+      startDate: payrollStartDate.getTime(),
+      endDate: calculatePayrollEndDate(
+        payrollStartDate,
+        season.payrollTimeframe
+      )?.getTime(),
+    };
+
     return {
       farmId,
       startDate,
@@ -130,7 +142,9 @@ async function getProductionData(payload: ProductionRequest) {
         price: season.price,
         product: season.product?.name,
         unit: season.unit?.name,
+        payrollTimeframe: season?.payrollTimeframe,
       },
+      nextEstimatedPayroll,
       totals: {
         netAmount: floor(grossAmount - deductions, 2),
         collectedAmount: floor(collectedAmount, 2),
@@ -202,6 +216,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
       details,
       lastPayroll,
       harvestLogIds,
+      nextEstimatedPayroll,
     } = payrollData;
 
     if (!details.length) {
@@ -247,17 +262,11 @@ async function create(req: Request, res: Response, next: NextFunction) {
         // Save payroll
         payroll.save({ session });
 
-        // Calculating next payroll date for this season
-        const payrollEndDate = new Date(Number(endDate));
-        payrollEndDate.setDate(payrollEndDate.getDate() + 1);
-        payrollEndDate.setHours(0, 0, 0, 0);
-        const nextEstimatedPayrollDate = payrollEndDate.getTime();
-
         if (!lastPayroll) {
           const farmPayroll = new FarmPayroll({
             farm: farmId,
             lastPayroll: payroll._id,
-            nextEstimatedPayrollDate,
+            nextEstimatedPayroll,
             season: seasonId,
           });
           const farmPayrollCreated = await farmPayroll.save({ session });
@@ -268,7 +277,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
             { farm: farmId, season: season.id },
             {
               lastPayroll: payroll._id,
-              nextEstimatedPayrollDate,
+              nextEstimatedPayroll,
             },
             {
               returnDocument: "after",
@@ -294,7 +303,10 @@ async function create(req: Request, res: Response, next: NextFunction) {
 
         const result = payroll.toObject();
         res.status(200).json({
-          data: { ...result, nextEstimatedPayrollDate },
+          data: {
+            ...result,
+            nextEstimatedPayroll,
+          },
           error: false,
           message: message.create("success"),
         });

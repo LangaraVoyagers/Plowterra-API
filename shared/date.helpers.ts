@@ -1,3 +1,5 @@
+import { PayrollTimeframeEnum } from "../models/Season";
+
 export const compareDates = (epoch1: number, epoch2: number) => {
   // inspired from https://stackoverflow.com/questions/13903897/javascript-return-number-of-days-hours-minutes-seconds-between-two-dates
 
@@ -17,4 +19,30 @@ export const compareDates = (epoch1: number, epoch2: number) => {
     hours,
     minutes,
   };
+};
+
+export const calculatePayrollEndDate = (
+  startDate: Date,
+  timeframe: `${PayrollTimeframeEnum}`
+) => {
+  const daysInTheWeek = 7;
+
+  if (timeframe === "Weekly") {
+    const weeks = 1;
+    startDate.setDate(startDate.getDate() + daysInTheWeek * weeks);
+    return startDate;
+  }
+
+  if (timeframe === "Monthly") {
+    const months = 1;
+    startDate.setMonth(startDate.getMonth() + months);
+    return startDate;
+  }
+
+  //Default to 2 weeks
+  //  if(timeframe === "Bi-Weekly"){
+  const weeks = 2;
+  startDate.setDate(startDate.getDate() + daysInTheWeek * weeks);
+  return startDate;
+  //  }
 };

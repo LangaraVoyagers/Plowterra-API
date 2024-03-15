@@ -43,5 +43,8 @@ export interface IFarmPayrollSchema {
   farm: Schema.Types.ObjectId;
   season: Schema.Types.ObjectId;
   lastPayroll: Schema.Types.ObjectId;
-  nextEstimatedPayrollDate: number;
+  nextEstimatedPayroll: {
+    startDate: number;
+    endDate: number;
+  };
 }
