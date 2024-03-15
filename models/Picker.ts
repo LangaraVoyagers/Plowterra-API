@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import {
   BloodType,
-  IPicker,
+  ICreatePickerRequest,
   IPickerContact,
   Relationship,
 } from "project-2-types/dist/interface";
@@ -10,7 +10,7 @@ import { IAuditSchema } from "../interfaces/shared.interface";
 import { AuditSchema } from "./Audit";
 import HarvestLog from "./HarvestLog";
 
-export interface IPickerSchema extends IAuditSchema, IPicker {}
+export interface IPickerSchema extends IAuditSchema, ICreatePickerRequest {}
 
 const PickerSchema: Schema = new Schema<IPickerSchema>({
   name: { type: String, required: true, maxlength: 40 },
