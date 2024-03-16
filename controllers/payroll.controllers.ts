@@ -335,6 +335,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
 
 function getAll(req: Request, res: Response, next: NextFunction) {
   Payroll.find({})
+    .select("+createdAt")
     .exec()
     .then((data) => {
       res
