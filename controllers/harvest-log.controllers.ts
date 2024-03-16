@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 
-import { MongooseError } from "mongoose";
-import harvestLogMessage from "../messages/harvest-log.messages";
 import HarvestLog from "../models/HarvestLog";
+import { MongooseError } from "mongoose";
 import { compareDates } from "../shared/date.helpers";
+import harvestLogMessage from "../messages/harvest-log.messages";
 
 const populateQuery = [
   {
@@ -141,12 +141,21 @@ const create = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
+    // 14 * 24 * 60 * 60 * 1000
+    const TWO_WEEKS = 1209600000;
+    
     const settled = req.query.settled ?? undefined;
     const seasonId = req.query.seasonId ?? undefined;
     const pickerId = req.query.pickerId ?? undefined;
+    const fromDate = req.query.fromDate ?? new Date(new Date().toLocaleDateString()).getTime() - TWO_WEEKS;
+    const toDate = req.query.toDate ?? new Date().getTime();
 
     const harvestLogs = await HarvestLog.find({
       $and: [
+        { createdAt: { 
+          $gte: fromDate,
+          $lte: toDate
+        }},
         { deletedAt: null },
         { parentId: null },
         ...(settled ? [{ settled }] : []),
