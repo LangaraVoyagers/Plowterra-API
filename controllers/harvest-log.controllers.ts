@@ -3,7 +3,12 @@ import { Request, Response } from "express";
 import { MongooseError } from "mongoose";
 import harvestLogMessage from "../messages/harvest-log.messages";
 import HarvestLog from "../models/HarvestLog";
+import { createMSM } from "../services/messageService";
+import { pluralize } from "../services/pluralize";
 import { compareDates } from "../shared/date.helpers";
+
+// import dotenv from 'dotenv';
+// dotenv.config();
 
 const populateQuery = [
   {
@@ -115,6 +120,42 @@ const create = async (req: Request, res: Response) => {
       data: savedHarvestLog,
       error: false,
     });
+
+    let pickerPhone = (savedHarvestLog.picker as any).phone;
+
+    let pickerName = (savedHarvestLog.picker as any).name;
+
+    let netAmount = savedHarvestLog.collectedAmount;
+
+    let product = (savedHarvestLog.season as any).product.name;
+
+    let payment = (savedHarvestLog.season as any).price * netAmount;
+
+    let unit: string;
+
+    if (netAmount > 1) {
+      let unitUser = (savedHarvestLog.season as any).unit.name;
+      unit = pluralize(unitUser);
+    } else {
+      unit = (savedHarvestLog.season as any).unit.name;
+    }
+
+    let currency = (savedHarvestLog.season as any).currency.name;
+
+    let message = `Hi ${pickerName}, you have collected ${netAmount} ${unit.toLowerCase()} of ${product.toLowerCase()}. That means you've earned ${payment} ${currency} for your next paycheck.`;
+    console.log(message);
+
+    createMSM(
+      req,
+      res,
+      pickerPhone,
+      pickerName,
+      netAmount,
+      unit,
+      product,
+      payment,
+      currency
+    );
   } catch (error) {
     // if there are any validation errors
     if ((error as any).name === "ValidationError") {
