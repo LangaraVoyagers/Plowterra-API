@@ -19,7 +19,7 @@ const POPULATE_SEASON = [
 
 const POPULATE_HARVEST_LOG = ["createdAt", "collectedAmount"];
 
-const POPULATE_PAYUROLL = ["totals"];
+const POPULATE_PAYROLL = ["totals"];
 
 async function getDashboardData(seasonId: any) {
   try {
@@ -39,7 +39,7 @@ async function getDashboardData(seasonId: any) {
     const payrollData = await Payroll.find({
       // season: season?._id,
     })
-      .populate(POPULATE_PAYUROLL)
+      .populate(POPULATE_PAYROLL)
       .exec();
 
     console.log({ payrollData });
@@ -47,14 +47,22 @@ async function getDashboardData(seasonId: any) {
     let totalHarvest = 0;
     let harvestDays = 0;
     let todaysHarvest = 0;
+    let previousDaysHarvest = 0;
     let totalPayroll = 0;
+    let totalDeductions = 0;
 
     const today = new Date().setHours(0, 0, 0, 0);
+    const previousDay = today - 86400000;
 
     harvestData.forEach((harvestLog: any) => {
       if (harvestLog.createdAt > today) {
         todaysHarvest += harvestLog.collectedAmount;
       }
+
+      if (harvestLog.createdAt > previousDay && harvestLog.createdAt < today) {
+        previousDaysHarvest += harvestLog.collectedAmount;
+      }
+
       totalHarvest += harvestLog.collectedAmount;
 
       if (harvestLog?.createdAt > season?.startDate) {
@@ -64,6 +72,7 @@ async function getDashboardData(seasonId: any) {
 
     payrollData.forEach((payroll: any) => {
       totalPayroll += payroll.totals.netAmount;
+      totalDeductions += payroll.totals.deductions;
     });
 
     return {
@@ -80,7 +89,9 @@ async function getDashboardData(seasonId: any) {
         totalHarvest,
         harvestDays,
         todaysHarvest,
+        previousDaysHarvest,
         totalPayroll,
+        totalDeductions,
       },
     };
   } catch (error) {
