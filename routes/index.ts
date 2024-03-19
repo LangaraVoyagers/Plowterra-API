@@ -1,6 +1,7 @@
 import express from "express";
 import authenticationRouter from "./authentication.routes";
 import currencyRouter from "./currency.routes";
+import dashboardRouter from "./dashboard.routes";
 import deductionsRouter from "./deductions.routes";
 import farmRouter from "./farm.routes";
 import harvestLogRouter from "./harvest-logs.routes";
@@ -22,5 +23,6 @@ router.use(unitRouter);
 router.use(seasonRouter);
 router.use(currencyRouter);
 router.use(farmRouter);
+router.use(dashboardRouter);
 
 export default router;
