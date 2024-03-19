@@ -6,50 +6,68 @@ import Message from "../shared/Message";
 
 const message = new Message("dashboard");
 
-const POPULATE_SEASON = [
-  //   {
-  //     path: "farm",
-  //     model: "Farm",
-  //     select: "name address",
-  //   },
-  "product",
-  "unit",
-  "currency",
-];
-
+const POPULATE_SEASON = ["product", "unit", "currency"];
 const POPULATE_HARVEST_LOG = ["createdAt", "collectedAmount"];
-
 const POPULATE_PAYROLL = ["totals"];
 
-async function getDashboardData(seasonId: any) {
+let season: any;
+let harvestData: any;
+let payrollData: any;
+
+let totalHarvest = 0;
+let harvestDays = 0;
+let todaysHarvest = 0;
+let previousDaysHarvest = 0;
+let totalPayroll = 0;
+let previousTotalPayroll = 0;
+let totalDeductions = 0;
+
+const getCurrentSeasonData = async (seasonId: any) => {
   try {
-    const season: any = await SeasonSchema.findOne({
+    season = await SeasonSchema.findOne({
       _id: seasonId,
       deletedAt: null,
       status: "ACTIVE",
     }).populate(POPULATE_SEASON);
+  } catch (error) {
+    throw error;
+  }
+};
 
-    const harvestData = await HarvestLog.find({
+const getHarvestData = async (seasonId: any) => {
+  try {
+    harvestData = await HarvestLog.find({
       deletedAt: null,
-      season: season?._id,
+      season: seasonId,
     })
       .populate(POPULATE_HARVEST_LOG)
       .exec();
+  } catch (error) {
+    throw error;
+  }
+};
 
-    const payrollData = await Payroll.find({
-      // season: season?._id,
+const getPayrollData = async () => {
+  try {
+    payrollData = await Payroll.find({
+      // season: seasonId, //TODO: filter by season
     })
       .populate(POPULATE_PAYROLL)
       .exec();
+  } catch (error) {
+    throw error;
+  }
+};
 
-    console.log({ payrollData });
+const getBySeasonId = async (req: Request, res: Response) => {
+  const seasonId = req.params.id;
 
-    let totalHarvest = 0;
-    let harvestDays = 0;
-    let todaysHarvest = 0;
-    let previousDaysHarvest = 0;
-    let totalPayroll = 0;
-    let totalDeductions = 0;
+  try {
+    await getCurrentSeasonData(seasonId);
+
+    await getHarvestData(seasonId);
+
+    await getPayrollData();
 
     const today = new Date().setHours(0, 0, 0, 0);
     const previousDay = today - 86400000;
@@ -75,7 +93,7 @@ async function getDashboardData(seasonId: any) {
       totalDeductions += payroll.totals.deductions;
     });
 
-    return {
+    const data = {
       season: {
         id: season?._id,
         name: season?.name,
@@ -91,19 +109,10 @@ async function getDashboardData(seasonId: any) {
         todaysHarvest,
         previousDaysHarvest,
         totalPayroll,
+        previousTotalPayroll,
         totalDeductions,
       },
     };
-  } catch (error) {
-    throw error;
-  }
-}
-
-const getBySeasonId = async (req: Request, res: Response) => {
-  try {
-    const seasonId = req.params.id;
-
-    const data = await getDashboardData(seasonId);
 
     return res.status(200).json({
       data,
