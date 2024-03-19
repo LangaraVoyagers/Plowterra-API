@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import HarvestLog from "../models/HarvestLog";
+import Payroll from "../models/Payroll";
 import SeasonSchema from "../models/Season";
 import Message from "../shared/Message";
 
@@ -18,7 +19,9 @@ const POPULATE_SEASON = [
 
 const POPULATE_HARVEST_LOG = ["createdAt", "collectedAmount"];
 
-async function getHarvestData(seasonId: any) {
+const POPULATE_PAYUROLL = ["totals"];
+
+async function getDashboardData(seasonId: any) {
   try {
     const season: any = await SeasonSchema.findOne({
       _id: seasonId,
@@ -26,25 +29,29 @@ async function getHarvestData(seasonId: any) {
       status: "ACTIVE",
     }).populate(POPULATE_SEASON);
 
-    if (!season) {
-      throw new Error("Season not found");
-    }
-
-    const data = await HarvestLog.find({
+    const harvestData = await HarvestLog.find({
       deletedAt: null,
       season: season?._id,
     })
       .populate(POPULATE_HARVEST_LOG)
       .exec();
 
+    const payrollData = await Payroll.find({
+      // season: season?._id,
+    })
+      .populate(POPULATE_PAYUROLL)
+      .exec();
+
+    console.log({ payrollData });
+
     let totalHarvest = 0;
     let harvestDays = 0;
     let todaysHarvest = 0;
-    //   let totalPayroll = 0;
+    let totalPayroll = 0;
 
     const today = new Date().setHours(0, 0, 0, 0);
 
-    data.forEach((harvestLog: any) => {
+    harvestData.forEach((harvestLog: any) => {
       if (harvestLog.createdAt > today) {
         todaysHarvest += harvestLog.collectedAmount;
       }
@@ -53,6 +60,10 @@ async function getHarvestData(seasonId: any) {
       if (harvestLog?.createdAt > season?.startDate) {
         harvestDays++; //TODO: fix this logic
       }
+    });
+
+    payrollData.forEach((payroll: any) => {
+      totalPayroll += payroll.totals.netAmount;
     });
 
     return {
@@ -69,7 +80,7 @@ async function getHarvestData(seasonId: any) {
         totalHarvest,
         harvestDays,
         todaysHarvest,
-        //   totalPayroll,
+        totalPayroll,
       },
     };
   } catch (error) {
@@ -81,7 +92,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
   try {
     const seasonId = req.params.id;
 
-    const data = await getHarvestData(seasonId);
+    const data = await getDashboardData(seasonId);
 
     return res.status(200).json({
       data,
