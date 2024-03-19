@@ -5,13 +5,26 @@ import Message from "../shared/Message";
 
 const message = new Message("dashboard");
 
+const POPULATE_SEASON = [
+  //   {
+  //     path: "farm",
+  //     model: "Farm",
+  //     select: "name address",
+  //   },
+  "product",
+  "unit",
+  "currency",
+];
+
+const POPULATE_HARVEST_LOG = ["createdAt", "collectedAmount"];
+
 async function getHarvestData(seasonId: any) {
   try {
     const season: any = await SeasonSchema.findOne({
       _id: seasonId,
       deletedAt: null,
       status: "ACTIVE",
-    }).populate(["product", "unit", "currency", "startDate"]);
+    }).populate(POPULATE_SEASON);
 
     if (!season) {
       throw new Error("Season not found");
@@ -21,7 +34,7 @@ async function getHarvestData(seasonId: any) {
       deletedAt: null,
       season: season?._id,
     })
-      .populate("picker")
+      .populate(POPULATE_HARVEST_LOG)
       .exec();
 
     let totalHarvest = 0;
@@ -31,16 +44,14 @@ async function getHarvestData(seasonId: any) {
 
     const today = new Date().setHours(0, 0, 0, 0);
 
-    console.log(today);
-
     data.forEach((harvestLog: any) => {
       if (harvestLog.createdAt > today) {
         todaysHarvest += harvestLog.collectedAmount;
       }
       totalHarvest += harvestLog.collectedAmount;
 
-      if (harvestLog.createdAt > season?.startDate) {
-        harvestDays++;
+      if (harvestLog?.createdAt > season?.startDate) {
+        harvestDays++; //TODO: fix this logic
       }
     });
 
