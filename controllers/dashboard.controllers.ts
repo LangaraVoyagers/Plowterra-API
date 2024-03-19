@@ -5,14 +5,8 @@ import Message from "../shared/Message";
 
 const message = new Message("dashboard");
 
-type HarvestDataRequest = {
-  seasonId: string;
-};
-
-async function getHarvestData(payload: HarvestDataRequest) {
+async function getHarvestData(seasonId: any) {
   try {
-    const { seasonId } = payload;
-
     const season: any = await SeasonSchema.findOne({
       _id: seasonId,
       deletedAt: null,
@@ -33,12 +27,14 @@ async function getHarvestData(payload: HarvestDataRequest) {
     let totalHarvest = 0;
     let harvestDays = 0;
     let todaysHarvest = 0;
-    //   let todalPayroll = 0;
+    //   let totalPayroll = 0;
+
+    const today = new Date().setHours(0, 0, 0, 0);
+
+    console.log(today);
 
     data.forEach((harvestLog: any) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (harvestLog.createdAt > today.getTime()) {
+      if (harvestLog.createdAt > today) {
         todaysHarvest += harvestLog.collectedAmount;
       }
       totalHarvest += harvestLog.collectedAmount;
@@ -62,7 +58,7 @@ async function getHarvestData(payload: HarvestDataRequest) {
         totalHarvest,
         harvestDays,
         todaysHarvest,
-        //   todalPayroll,
+        //   totalPayroll,
       },
     };
   } catch (error) {
@@ -74,9 +70,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
   try {
     const seasonId = req.params.id;
 
-    const data = await getHarvestData({
-      seasonId,
-    });
+    const data = await getHarvestData(seasonId);
 
     return res.status(200).json({
       data,
