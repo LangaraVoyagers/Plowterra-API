@@ -142,9 +142,6 @@ const create = async (req: Request, res: Response) => {
 
     let currency = (savedHarvestLog.season as any).currency.name;
 
-    let message = `Hi ${pickerName}, you have collected ${netAmount} ${unit.toLowerCase()} of ${product.toLowerCase()}. That means you've earned ${payment} ${currency} for your next paycheck.`;
-    console.log(message);
-
     createMSM(
       req,
       res,

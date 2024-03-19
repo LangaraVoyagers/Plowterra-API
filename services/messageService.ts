@@ -20,7 +20,7 @@ export const createMSM = async (
 ) => {
   try {
     const message = await client.messages.create({
-      body: `Hi ${pickerName}, you have collected ${netAmount} ${unit.toLowerCase()} of ${product.toLowerCase()}. That means you've earned ${payment} ${currency} for your next paycheck.`,
+      body: `Hi ${pickerName}, you have collected ${netAmount} ${unit.toLowerCase()} of ${product.toLowerCase()}. That means you've earned ${currency} ${payment} for your next paycheck.`,
       from: "+16205914371",
       to: `+${pickerPhone}`,
     });
