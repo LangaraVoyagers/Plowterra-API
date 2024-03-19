@@ -13,7 +13,6 @@ const POPULATE_PAYROLL = ["totals"];
 let season: any;
 let harvestData: any;
 let payrollData: any;
-let allSeasonsData: any;
 let previousSeasonData: any;
 
 let totalHarvest = 0;
@@ -61,44 +60,20 @@ const getPayrollData = async () => {
   }
 };
 
-const getPreviousSeasonData = async (seasonId: any) => {
+const getPreviousSeasonData = async () => {
   try {
-    allSeasonsData = await SeasonSchema.find({
-      deletedAt: null,
-      product: season?.product,
-      // status: "Closed",
-    })
-      .select("status startDate endDate product")
-      .populate(POPULATE_SEASON);
+    previousSeasonData = await SeasonSchema.findOne(
+      {
+        status: "Closed",
+        deletedAt: null,
+        product: season?.product,
+        endDate: { $lt: season?.startDate },
+      },
+      {},
+      { sort: { endDate: -1 } }
+    ).populate(POPULATE_SEASON);
 
-    console.log("unsorted: " + allSeasonsData);
-
-    //find the previous season compared to the current season, its endDate should be the closest to the current season's startDate
-    allSeasonsData.sort((a: any, b: any) => {
-      return a.endDate - b.endDate;
-    });
-
-    console.log("sorted: " + allSeasonsData);
-
-    const currentSeasonIndex = allSeasonsData.findIndex(
-      (season: any) => season._id === seasonId
-    );
-
-    console.log("current season index: " + currentSeasonIndex);
-
-    if (currentSeasonIndex !== -1 && currentSeasonIndex > 0) {
-      previousSeasonData = allSeasonsData[currentSeasonIndex - 1];
-    } else {
-      previousSeasonData = null;
-    }
-
-    console.log("previous season: " + previousSeasonData);
-
-    // previousSeasonData = await SeasonSchema.findOne({
-    //   _id: previousSeasonId,
-    //   deletedAt: null,
-    //   status: "ACTIVE",
-    // }).populate(POPULATE_SEASON);
+    console.log({ previousSeasonData });
   } catch (error) {
     throw error;
   }
@@ -111,7 +86,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
     await getCurrentSeasonData(seasonId);
     await getHarvestData(seasonId);
     await getPayrollData();
-    await getPreviousSeasonData(seasonId);
+    await getPreviousSeasonData();
 
     const today = new Date().setHours(0, 0, 0, 0);
     const previousDay = today - 86400000;
