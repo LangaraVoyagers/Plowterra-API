@@ -93,20 +93,19 @@ const SeasonSchema = model<ISeasonSchema>(
     deductions: [
       new Schema<ISeasonDeductionSchema>({
         deductionID: {
-          type: Schema.Types.ObjectId,
-          ref: "Deduction",
-          validate: {
-            validator: async (id: string) => {
-              const data = await Deduction.exists({ _id: id, deletedAt: null });
+          type: String,
+          validate: async (id: string) => {
+            if (!id) {
+              return true;
+            }
+            const data = await Deduction.exists({ _id: id, deletedAt: null });
 
-              return !!data;
-            },
-            message: seasonMessages.INVALID_DEDUCTION_ID,
+            return !!data;
           },
+          message: seasonMessages.INVALID_DEDUCTION_ID,
         },
         price: {
           type: Number,
-          min: 0.01,
           required: function () {
             return !!this.deductionID;
           },

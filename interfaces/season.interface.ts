@@ -18,6 +18,6 @@ export interface ISeasonSchema extends IAuditSchema {
 }
 
 export interface ISeasonDeductionSchema {
-  deductionID: Schema.Types.ObjectId;
+  deductionID: String;
   price: number;
 }
