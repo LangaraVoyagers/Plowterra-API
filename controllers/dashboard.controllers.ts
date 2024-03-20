@@ -63,7 +63,7 @@ const getHarvestData = async (seasonId: any) => {
 const getPayrollData = async (seasonId: any) => {
   try {
     payrollData = await Payroll.find({
-      season: { id: seasonId },
+      "season.id": seasonId,
     })
       .populate(POPULATE_PAYROLL)
       .exec();
@@ -105,7 +105,7 @@ const getPreviousHarvestData = async () => {
 const getPreviousPayrollData = async () => {
   try {
     previousPayrollData = await Payroll.find({
-      season: "65d703cf9a00b1a671609458",
+      "season.id": previousSeasonData?.id,
     })
       .populate(POPULATE_PAYROLL)
       .exec();
@@ -150,7 +150,7 @@ type ProductionRequest = {
 const getRecentPayrollData = async () => {
   try {
     recentPayrollData = await Payroll.find({
-      // season: { id: "65f3d9bb8ee7fc06724abc2f" },
+      "season.id": seasonData?.id,
     })
       .sort({ createdAt: -1 })
       .select("+createdAt")
@@ -219,7 +219,6 @@ const getBySeasonId = async (req: Request, res: Response) => {
       });
 
       previousAveragePayroll = previousTotalPayroll / previousHarvestDays;
-      console.log({ previousPayrollData });
     });
 
     await getRecentPayrollData().then(() => {
