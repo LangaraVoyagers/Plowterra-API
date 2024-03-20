@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import HarvestLog from "../models/HarvestLog";
-import Payroll from "../models/Payroll";
+import Payroll, { FarmPayroll } from "../models/Payroll";
 import SeasonSchema from "../models/Season";
 import Message from "../shared/Message";
 
@@ -16,6 +16,8 @@ let payrollData: any;
 let previousSeasonData: any;
 let previousHarvestData: any;
 let previousPayrollData: any;
+let payrollToTodayData: any;
+let recentPayrollData: any;
 
 let totalHarvest = 0;
 let harvestDays = 0;
@@ -30,6 +32,8 @@ let previousHarvestDays = 0;
 let previousAverageHarvest = 0;
 let previousTotalPayroll = 0;
 let previousAveragePayroll = 0;
+
+let lastThreePayrolls: any[] = [];
 
 const getSeasonData = async (seasonId: any) => {
   try {
@@ -110,8 +114,55 @@ const getPreviousPayrollData = async () => {
   }
 };
 
+type ProductionRequest = {
+  farmId: string;
+  seasonId: string;
+  endDate: number;
+  startDate?: number;
+};
+
+const getPayrollToTodayData = async (payload: ProductionRequest) => {
+  try {
+    const { farmId, seasonId, endDate = Date.now() } = payload;
+    let { startDate } = payload;
+
+    const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
+
+    if (!startDate) {
+      if (!lastPayroll) {
+        startDate = seasonData?.startDate;
+      } else {
+        startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
+      }
+    }
+
+    payrollToTodayData = await Payroll.find({
+      season: { id: "65f3d9bb8ee7fc06724abc2f" },
+    })
+      .populate(POPULATE_PAYROLL)
+      .exec();
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getRecentPayrollData = async () => {
+  try {
+    recentPayrollData = await Payroll.find({
+      // season: { id: "65f3d9bb8ee7fc06724abc2f" },
+    })
+      .sort({ createdAt: -1 })
+      .select("+createdAt")
+      .populate(POPULATE_PAYROLL)
+      .exec();
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getBySeasonId = async (req: Request, res: Response) => {
   const seasonId = req.params.id;
+  const today = new Date().setHours(0, 0, 0, 0);
 
   try {
     await getSeasonData(seasonId).then(() => {});
@@ -160,6 +211,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
       previousHarvestDays = previousUniqueDaysSet.size;
       previousAverageHarvest = previousTotalHarvest / previousHarvestDays;
     });
+
     await getPreviousPayrollData().then(() => {
       previousPayrollData.forEach((payroll: any) => {
         previousTotalPayroll += payroll.totals.netAmount;
@@ -169,7 +221,10 @@ const getBySeasonId = async (req: Request, res: Response) => {
       console.log({ previousPayrollData });
     });
 
-    const today = new Date().setHours(0, 0, 0, 0);
+    await getRecentPayrollData().then(() => {
+      lastThreePayrolls = recentPayrollData.slice(0, 3);
+      console.log({ lastThreePayrolls });
+    });
 
     const data = {
       season: {
@@ -186,7 +241,6 @@ const getBySeasonId = async (req: Request, res: Response) => {
         totalHarvest,
         harvestDays,
         todaysHarvest,
-        averageHarvest,
         totalPayroll,
         totalDeductions,
       },
@@ -196,6 +250,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
         previousAverageHarvest,
         previousAveragePayroll,
       },
+      lastPayrolls: lastThreePayrolls,
     };
 
     return res.status(200).json({
