@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import HarvestLog from "../models/HarvestLog";
-import Payroll, { FarmPayroll } from "../models/Payroll";
+import Payroll from "../models/Payroll";
 import SeasonSchema from "../models/Season";
 import Message from "../shared/Message";
 
@@ -105,7 +105,7 @@ const getPreviousHarvestData = async () => {
 const getPreviousPayrollData = async () => {
   try {
     previousPayrollData = await Payroll.find({
-      season: { id: "65f3d9bb8ee7fc06724abc2f" },
+      season: "65d703cf9a00b1a671609458",
     })
       .populate(POPULATE_PAYROLL)
       .exec();
@@ -121,30 +121,31 @@ type ProductionRequest = {
   startDate?: number;
 };
 
-const getPayrollToTodayData = async (payload: ProductionRequest) => {
-  try {
-    const { farmId, seasonId, endDate = Date.now() } = payload;
-    let { startDate } = payload;
+//TODO:
+// const getPayrollToTodayData = async (payload: ProductionRequest) => {
+//   try {
+//     const { farmId, seasonId, endDate = Date.now() } = payload;
+//     let { startDate } = payload;
 
-    const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
+//     const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
 
-    if (!startDate) {
-      if (!lastPayroll) {
-        startDate = seasonData?.startDate;
-      } else {
-        startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
-      }
-    }
+//     if (!startDate) {
+//       if (!lastPayroll) {
+//         startDate = seasonData?.startDate;
+//       } else {
+//         startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
+//       }
+//     }
 
-    payrollToTodayData = await Payroll.find({
-      season: { id: "65f3d9bb8ee7fc06724abc2f" },
-    })
-      .populate(POPULATE_PAYROLL)
-      .exec();
-  } catch (error) {
-    throw error;
-  }
-};
+//     payrollToTodayData = await Payroll.find({
+//       // season: { id: "65f3d9bb8ee7fc06724abc2f" },
+//     })
+//       .populate(POPULATE_PAYROLL)
+//       .exec();
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 const getRecentPayrollData = async () => {
   try {
@@ -223,7 +224,6 @@ const getBySeasonId = async (req: Request, res: Response) => {
 
     await getRecentPayrollData().then(() => {
       lastThreePayrolls = recentPayrollData.slice(0, 3);
-      console.log({ lastThreePayrolls });
     });
 
     const data = {
