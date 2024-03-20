@@ -19,10 +19,38 @@ export const createMSM = async (
   currency: string
 ) => {
   try {
-    const message = await client.messages.create({
-      body: `Hi ${pickerName}, you have collected ${netAmount} ${unit.toLowerCase()} of ${product.toLowerCase()}. That means you've earned ${currency} ${payment} for your next paycheck.`,
-      from: "+16205914371",
-      to: `+${pickerPhone}`,
+    if (pickerPhone === "16724726022") {
+      const message = await client.messages.create({
+        body: `Hi ${pickerName}, you have collected ${netAmount} ${unit.toLowerCase()} of ${product.toLowerCase()}. That means you've earned ${currency} ${payment} for your next paycheck.`,
+        from: "+16205914371",
+        to: `+${pickerPhone}`,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createSMS = async (
+  req: Request,
+  res: Response,
+  nameSMS: string[],
+  phoneSMS: string[],
+  netAmountSMS: number[],
+  collectedAmountSMS: number[],
+  currencySMS: string,
+  productSMS: string,
+  unitSMS: string[]
+) => {
+  try {
+    nameSMS.forEach(async (name, index) => {
+      if (phoneSMS[index] === "16724726022") {
+        const message = await client.messages.create({
+          body: `Hi ${name}, your payment for this payroll is ${currencySMS} ${netAmountSMS[index]} for a total collection of ${collectedAmountSMS[index]} ${unitSMS[index]} of ${productSMS}.`,
+          from: "+16205914371",
+          to: `+${phoneSMS[index]}`,
+        });
+      }
     });
   } catch (error) {
     console.error(error);
