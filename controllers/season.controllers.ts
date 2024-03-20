@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ISeasonDeductionSchema } from "../interfaces/season.interface";
-import Season, { StatusEnum } from "../models/Season";
+import Season from "../models/Season";
 import Message from "../shared/Message";
 import getContentLocation from "../shared/get-content-location";
 
@@ -61,7 +61,11 @@ function create(req: Request, res: Response, next: NextFunction) {
 }
 
 function getAll(req: Request, res: Response, next: NextFunction) {
-  Season.find({ deletedAt: null })
+  const status = req.query.status;
+
+  Season.find({
+    $and: [{ deletedAt: null }, ...(status ? [{ status }] : [])],
+  })
     .select("name status startDate endDate currency product unit deductions")
     .populate(POPULATE_FIELDS)
     .exec()
@@ -109,7 +113,7 @@ function close(req: Request, res: Response, next: NextFunction) {
 
   Season.findOneAndUpdate(
     { _id: id, deletedAt: null },
-    { status: StatusEnum.CLOSED, endDate: new Date().getTime() },
+    { status: "CLOSED", endDate: new Date().getTime() },
     { new: true }
   )
     .populate(POPULATE_FIELDS)
