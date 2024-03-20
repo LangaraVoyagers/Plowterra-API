@@ -32,7 +32,10 @@ async function getProductionData(payload: ProductionRequest) {
       throw new Error("Season not found");
     }
 
-    const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
+    const lastPayroll = await FarmPayroll.findOne({
+      farm: farmId,
+      season: season.id,
+    });
 
     if (!startDate) {
       if (!lastPayroll) {
@@ -265,6 +268,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
         // Save payroll
         payroll.save({ session });
 
+        console.log({ lastPayroll });
         if (!lastPayroll) {
           const farmPayroll = new FarmPayroll({
             farm: farmId,
@@ -276,6 +280,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
           console.log("Farm payroll created", farmPayrollCreated._id);
         } else {
           // Update the last payroll of the farm by season
+
           const farmPayrollUpdated = await FarmPayroll.findOneAndUpdate(
             { farm: farmId, season: season.id },
             {
