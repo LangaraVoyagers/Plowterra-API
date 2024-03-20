@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import HarvestLog from "../models/HarvestLog";
 import Payroll, { FarmPayroll } from "../models/Payroll";
 import SeasonSchema from "../models/Season";
-import { createSMS } from "../services/messageService";
+import { createSMSpayroll } from "../services/messageService";
 import { pluralize } from "../services/pluralize";
 import Message from "../shared/Message";
 import { calculatePayrollEndDate } from "../shared/date.helpers";
@@ -299,13 +299,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
             }
           });
 
-          nameSMS.forEach((name, index) => {
-            console.log(
-              `Hi ${name}, your payment for this payroll is ${currencySMS} ${netAmountSMS[index]} for a total collection of ${collectedAmountSMS[index]} ${unitSMS[index]} of ${productSMS}.`
-            );
-          });
-
-          createSMS(
+          createSMSpayroll(
             req,
             res,
             nameSMS,

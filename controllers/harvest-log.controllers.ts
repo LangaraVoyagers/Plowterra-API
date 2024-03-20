@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { MongooseError } from "mongoose";
 import harvestLogMessage from "../messages/harvest-log.messages";
 import HarvestLog from "../models/HarvestLog";
-import { createMSM } from "../services/messageService";
+import { createSMSlog } from "../services/messageService";
 import { pluralize } from "../services/pluralize";
 import { compareDates } from "../shared/date.helpers";
 
@@ -142,7 +142,7 @@ const create = async (req: Request, res: Response) => {
 
     let currency = (savedHarvestLog.season as any).currency.name;
 
-    createMSM(
+    createSMSlog(
       req,
       res,
       pickerPhone,

@@ -7,7 +7,7 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
-export const createMSM = async (
+export const createSMSlog = async (
   req: Request,
   res: Response,
   pickerPhone: string,
@@ -31,7 +31,7 @@ export const createMSM = async (
   }
 };
 
-export const createSMS = async (
+export const createSMSpayroll = async (
   req: Request,
   res: Response,
   nameSMS: string[],
