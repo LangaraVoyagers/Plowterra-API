@@ -106,7 +106,10 @@ HarvestLogSchema.virtual("totalDeduction").get(function () {
     seasonDeductions?.forEach(({ _id }: any) => {
       let matchingDeduction;
       matchingDeduction = season?.deductions?.find((pd: any) => {
-        return pd.deductionID.equals(_id);
+        if (pd.deductionID?.equals) {
+          return pd.deductionID.equals(_id);
+        }
+        return pd.deductionID == _id;
       });
 
       if (matchingDeduction) {
