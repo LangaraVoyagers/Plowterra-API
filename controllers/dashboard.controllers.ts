@@ -56,10 +56,10 @@ const getHarvestData = async (seasonId: any) => {
   }
 };
 
-const getPayrollData = async () => {
+const getPayrollData = async (seasonId: any) => {
   try {
     payrollData = await Payroll.find({
-      // season: seasonId, //TODO: filter by season
+      season: { id: seasonId },
     })
       .populate(POPULATE_PAYROLL)
       .exec();
@@ -101,7 +101,7 @@ const getPreviousHarvestData = async () => {
 const getPreviousPayrollData = async () => {
   try {
     previousPayrollData = await Payroll.find({
-      // season: seasonId, //TODO: filter by season
+      season: { id: "65f3d9bb8ee7fc06724abc2f" },
     })
       .populate(POPULATE_PAYROLL)
       .exec();
@@ -114,57 +114,62 @@ const getBySeasonId = async (req: Request, res: Response) => {
   const seasonId = req.params.id;
 
   try {
-    await getSeasonData(seasonId);
-    await getHarvestData(seasonId);
-    await getPayrollData();
-    await getPreviousSeasonData();
-    await getPreviousHarvestData();
-    await getPreviousPayrollData();
+    await getSeasonData(seasonId).then(() => {});
+
+    await getHarvestData(seasonId).then(() => {
+      const uniqueDaysSet = new Set();
+      let createdAt;
+
+      harvestData.forEach((harvestLog: any) => {
+        if (harvestLog.createdAt > today) {
+          todaysHarvest += harvestLog.collectedAmount;
+        }
+
+        totalHarvest += harvestLog.collectedAmount;
+
+        createdAt = new Date(harvestLog.createdAt).setHours(0, 0, 0, 0);
+        uniqueDaysSet.add(createdAt);
+      });
+
+      harvestDays = uniqueDaysSet.size;
+
+      averageHarvest = totalHarvest / harvestDays;
+    });
+
+    await getPayrollData(seasonId).then(() => {
+      payrollData.forEach((payroll: any) => {
+        totalPayroll += payroll.totals.netAmount;
+        totalDeductions += payroll.totals.deductions;
+      });
+
+      averagePayroll = totalPayroll / harvestDays;
+    });
+    await getPreviousSeasonData().then(() => {});
+
+    await getPreviousHarvestData().then(() => {
+      const previousUniqueDaysSet = new Set();
+      let previousCreatedAt;
+
+      previousHarvestData.forEach((harvestLog: any) => {
+        previousTotalHarvest += harvestLog.collectedAmount;
+
+        previousCreatedAt = new Date(harvestLog.createdAt).setHours(0, 0, 0, 0);
+        previousUniqueDaysSet.add(previousCreatedAt);
+      });
+
+      previousHarvestDays = previousUniqueDaysSet.size;
+      previousAverageHarvest = previousTotalHarvest / previousHarvestDays;
+    });
+    await getPreviousPayrollData().then(() => {
+      previousPayrollData.forEach((payroll: any) => {
+        previousTotalPayroll += payroll.totals.netAmount;
+      });
+
+      previousAveragePayroll = previousTotalPayroll / previousHarvestDays;
+      console.log({ previousPayrollData });
+    });
 
     const today = new Date().setHours(0, 0, 0, 0);
-    const uniqueDaysSet = new Set();
-    let createdAt;
-
-    const previousUniqueDaysSet = new Set();
-    let previousCreatedAt;
-
-    harvestData.forEach((harvestLog: any) => {
-      if (harvestLog.createdAt > today) {
-        todaysHarvest += harvestLog.collectedAmount;
-      }
-
-      totalHarvest += harvestLog.collectedAmount;
-
-      createdAt = new Date(harvestLog.createdAt).setHours(0, 0, 0, 0);
-      uniqueDaysSet.add(createdAt);
-    });
-
-    harvestDays = uniqueDaysSet.size;
-
-    averageHarvest = totalHarvest / harvestDays;
-
-    payrollData.forEach((payroll: any) => {
-      totalPayroll += payroll.totals.netAmount;
-      totalDeductions += payroll.totals.deductions;
-    });
-
-    averagePayroll = totalPayroll / harvestDays;
-
-    previousHarvestData.forEach((harvestLog: any) => {
-      previousTotalHarvest += harvestLog.collectedAmount;
-
-      previousCreatedAt = new Date(harvestLog.createdAt).setHours(0, 0, 0, 0);
-      previousUniqueDaysSet.add(previousCreatedAt);
-    });
-
-    previousHarvestDays = previousUniqueDaysSet.size;
-    previousAverageHarvest = previousTotalHarvest / previousHarvestDays;
-
-    previousPayrollData.forEach((payroll: any) => {
-      previousTotalPayroll += payroll.totals.netAmount;
-    });
-
-    previousAveragePayroll = previousTotalPayroll / previousHarvestDays;
 
     const data = {
       season: {
