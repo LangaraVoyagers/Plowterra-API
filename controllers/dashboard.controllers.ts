@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
 import HarvestLog from "../models/HarvestLog";
-import Payroll from "../models/Payroll";
+import Payroll, { FarmPayroll } from "../models/Payroll";
 import SeasonSchema from "../models/Season";
 import Message from "../shared/Message";
 
 const message = new Message("dashboard");
 
-const POPULATE_SEASON = ["product", "unit", "currency", "endDate"];
+const POPULATE_SEASON = [
+  "product",
+  "unit",
+  "currency",
+  "endDate",
+  "payrollTimeframe",
+];
 const POPULATE_HARVEST_LOG = ["createdAt", "collectedAmount"];
 const POPULATE_PAYROLL = ["totals"];
 
@@ -91,36 +97,55 @@ const getPreviousPayrollData = async (previousSeasonData: any) => {
 
 type ProductionRequest = {
   farmId: string;
-  seasonId: string;
-  endDate: number;
-  startDate?: number;
+  // seasonId: string;
+  seasonData?: any;
+  // endDate: number;
+  // startDate?: number;
 };
 
-//TODO:
-// const getPayrollToTodayData = async (payload: ProductionRequest) => {
-//   try {
-//     const { farmId, seasonId, endDate = Date.now() } = payload;
-//     let { startDate } = payload;
+const getPayrollToTodayData = async (payload: ProductionRequest) => {
+  try {
+    const { farmId, seasonData } = payload;
+    // let { startDate } = payload;
+    const endDate = Date.now();
+    let startDate;
+    let grossAmount = 0;
 
-//     const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
+    const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
 
-//     if (!startDate) {
-//       if (!lastPayroll) {
-//         startDate = seasonData?.startDate;
-//       } else {
-//         startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
-//       }
-//     }
+    if (!lastPayroll) {
+      startDate = seasonData?.startDate;
+    } else {
+      startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
+    }
 
-//     payrollToTodayData = await Payroll.find({
-//       // season: { id: "65f3d9bb8ee7fc06724abc2f" },
-//     })
-//       .populate(POPULATE_PAYROLL)
-//       .exec();
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+    const data = await HarvestLog.find({
+      deletedAt: null,
+      season: seasonData?._id,
+      settled: false,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    }).populate(POPULATE_HARVEST_LOG);
+
+    data.forEach((harvestLog) => {
+      grossAmount += harvestLog.collectedAmount * seasonData?.price;
+    });
+
+    return {
+      grossAmount,
+    };
+
+    // payrollToTodayData = await Payroll.find({
+    //   "season.id": seasonData?.id,
+    // })
+    // .populate(POPULATE_PAYROLL)
+    // .exec();
+  } catch (error) {
+    throw error;
+  }
+};
 
 const getRecentPayrollData = async (seasonData: any) => {
   try {
@@ -145,6 +170,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
   let totalDeductions = 0;
   let previousTotalHarvest = 0;
   let previousTotalPayroll = 0;
+  let previousAverageHarvest = 0;
 
   try {
     const seasonData = await getSeasonData(seasonId);
@@ -185,8 +211,6 @@ const getBySeasonId = async (req: Request, res: Response) => {
     const previousUniqueDaysSet = new Set();
     let previousCreatedAt;
 
-    let previousAverageHarvest = 0;
-
     previousHarvestData.forEach((harvestLog: any) => {
       previousTotalHarvest += harvestLog.collectedAmount;
 
@@ -206,6 +230,13 @@ const getBySeasonId = async (req: Request, res: Response) => {
 
     const recentPayrollData = await getRecentPayrollData(seasonData);
     const lastThreePayrolls = recentPayrollData.slice(0, 3);
+
+    const payrollToTodayData = await getPayrollToTodayData({
+      farmId: "65d703cf9a00b1a671609458",
+      seasonData: seasonData,
+      // endDate: Date.now(),
+      // startDate: seasonData?.startDate,
+    });
 
     const data = {
       season: {
@@ -232,6 +263,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
         previousAveragePayroll,
       },
       lastPayrolls: lastThreePayrolls,
+      payrollToTodayData,
     };
 
     return res.status(200).json({
