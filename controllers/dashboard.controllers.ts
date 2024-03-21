@@ -288,24 +288,6 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
   }
 };
 
-// you have to return an array like this:
-
-// [
-// {
-// // This is the minimum you need
-// -------------------------------------
-//    date: 'YYYY-MM-DD', -> already formatted, not timestamp
-//    collectedAmount: 300,
-// --------------------------------------
-// // Then you can add some other information to be displayed in the popup, for example:
-//    pickersCount,
-//    netPayment, <- if there is data available from the payrolls
-//    grossPayment, <- the collectedAmount * seasonPrice
-// }
-// ]
-
-// The idea is that the dates won't be duplicated, each item in the list will be a different date, and you have to group the information based on that
-
 const getHarvestGraphBySId = async (req: Request, res: Response) => {
   const seasonId = req.params.id;
 
