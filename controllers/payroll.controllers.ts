@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import HarvestLog from "../models/HarvestLog";
 import Payroll, { FarmPayroll } from "../models/Payroll";
 import SeasonSchema from "../models/Season";
+import { createSMSpayroll } from "../services/messageService";
+import { pluralize } from "../services/pluralize";
 import Message from "../shared/Message";
 import { calculatePayrollEndDate } from "../shared/date.helpers";
 
@@ -100,6 +102,7 @@ async function getProductionData(payload: ProductionRequest) {
               picker: {
                 id: pickerId,
                 name: curr.picker?.name,
+                phone: curr.picker?.phone,
               },
               collectedAmount: floor(
                 prev.collectedAmount + curr.collectedAmount,
@@ -278,6 +281,42 @@ async function create(req: Request, res: Response, next: NextFunction) {
           });
           const farmPayrollCreated = await farmPayroll.save({ session });
           console.log("Farm payroll created", farmPayrollCreated._id);
+
+          let nameSMS = payroll.details.map(
+            (detail) => (detail.picker as any).name
+          );
+          let phoneSMS = payroll.details.map(
+            (detail) => (detail.picker as any).phone
+          );
+          let netAmountSMS = payroll.details.map((detail) => detail.netAmount);
+          let collectedAmountSMS = payroll.details.map(
+            (detail) => detail.collectedAmount
+          );
+
+          let currencySMS = payroll.season.currency;
+          let productSMS = payroll.season.product;
+
+          let unitSMS: string[];
+          unitSMS = collectedAmountSMS.map((amount) => {
+            if (amount > 1) {
+              let unitUser = (payroll.season as any).unit;
+              return pluralize(unitUser);
+            } else {
+              return (payroll.season as any).unit;
+            }
+          });
+
+          createSMSpayroll(
+            req,
+            res,
+            nameSMS,
+            phoneSMS,
+            netAmountSMS,
+            collectedAmountSMS,
+            currencySMS,
+            productSMS,
+            unitSMS
+          );
         } else {
           // Update the last payroll of the farm by season
 

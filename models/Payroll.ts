@@ -11,6 +11,7 @@ import { AuditSchema } from "./Audit";
 const PayrollPickerSchema = new Schema<IPayrollPickerSchema>({
   id: { type: String, required: true },
   name: { type: String, required: true },
+  phone: { type: String, required: true },
 });
 
 const PayrollSeasonSchema = new Schema<IPayrollSeasonSchema>({

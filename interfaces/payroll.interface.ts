@@ -28,6 +28,7 @@ export interface IPayrollDetailSchema {
 export interface IPayrollPickerSchema {
   id: string;
   name: string;
+  phone: string;
 }
 
 export interface IPayrollSeasonSchema {
