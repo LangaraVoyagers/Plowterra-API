@@ -149,7 +149,7 @@ const getRecentPayrollData = async (seasonData: any) => {
   }
 };
 
-const getBySeasonId = async (req: Request, res: Response) => {
+const getIndicatorsBySId = async (req: Request, res: Response) => {
   const seasonId = req.params.id;
   const farmId = res.locals.user.farm._id;
 
@@ -271,7 +271,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
 };
 
 const dashboardController = {
-  getBySeasonId,
+  getIndicatorsBySId,
 };
 
 export default dashboardController;
