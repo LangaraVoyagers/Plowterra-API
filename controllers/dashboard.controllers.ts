@@ -10,13 +10,6 @@ const POPULATE_SEASON = ["product", "unit", "currency", "endDate"];
 const POPULATE_HARVEST_LOG = ["createdAt", "collectedAmount"];
 const POPULATE_PAYROLL = ["totals"];
 
-let totalHarvest = 0;
-let todaysHarvest = 0;
-let totalPayroll = 0;
-let totalDeductions = 0;
-let previousTotalHarvest = 0;
-let previousTotalPayroll = 0;
-
 const getSeasonData = async (seasonId: any) => {
   try {
     return await SeasonSchema.findOne({
@@ -146,6 +139,12 @@ const getRecentPayrollData = async (seasonData: any) => {
 const getBySeasonId = async (req: Request, res: Response) => {
   const seasonId = req.params.id;
   const today = new Date().setHours(0, 0, 0, 0);
+  let totalHarvest = 0;
+  let todaysHarvest = 0;
+  let totalPayroll = 0;
+  let totalDeductions = 0;
+  let previousTotalHarvest = 0;
+  let previousTotalPayroll = 0;
 
   try {
     const seasonData = await getSeasonData(seasonId);
