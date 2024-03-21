@@ -97,16 +97,13 @@ const getPreviousPayrollData = async (previousSeasonData: any) => {
 
 type ProductionRequest = {
   farmId: string;
-  // seasonId: string;
   seasonData?: any;
-  // endDate: number;
-  // startDate?: number;
 };
 
 const getPayrollToTodayData = async (payload: ProductionRequest) => {
   try {
     const { farmId, seasonData } = payload;
-    // let { startDate } = payload;
+
     const endDate = Date.now();
     let startDate;
     let grossAmount = 0;
@@ -136,12 +133,6 @@ const getPayrollToTodayData = async (payload: ProductionRequest) => {
     return {
       grossAmount,
     };
-
-    // payrollToTodayData = await Payroll.find({
-    //   "season.id": seasonData?.id,
-    // })
-    // .populate(POPULATE_PAYROLL)
-    // .exec();
   } catch (error) {
     throw error;
   }
@@ -232,10 +223,8 @@ const getBySeasonId = async (req: Request, res: Response) => {
     const lastThreePayrolls = recentPayrollData.slice(0, 3);
 
     const payrollToTodayData = await getPayrollToTodayData({
-      farmId: "65d703cf9a00b1a671609458",
+      farmId: "65d703cf9a00b1a671609458", //TODO: replace with farmId from request
       seasonData: seasonData,
-      // endDate: Date.now(),
-      // startDate: seasonData?.startDate,
     });
 
     const data = {
