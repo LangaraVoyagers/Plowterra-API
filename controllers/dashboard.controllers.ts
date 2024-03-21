@@ -6,13 +6,7 @@ import Message from "../shared/Message";
 
 const message = new Message("dashboard");
 
-const POPULATE_SEASON = [
-  "product",
-  "unit",
-  "currency",
-  "endDate",
-  "payrollTimeframe",
-];
+const POPULATE_SEASON = ["product", "unit", "currency"];
 const POPULATE_HARVEST_LOG = ["createdAt", "collectedAmount"];
 const POPULATE_PAYROLL = ["totals"];
 
@@ -22,7 +16,10 @@ const getSeasonData = async (seasonId: any) => {
       _id: seasonId,
       deletedAt: null,
       status: "ACTIVE",
-    }).populate(POPULATE_SEASON);
+    })
+      .populate(POPULATE_SEASON)
+      .select("+payrollTimeframe +price +endDate")
+      .exec();
   } catch (error) {
     throw error;
   }
@@ -154,6 +151,8 @@ const getRecentPayrollData = async (seasonData: any) => {
 
 const getBySeasonId = async (req: Request, res: Response) => {
   const seasonId = req.params.id;
+  const farmId = res.locals.user.farm._id;
+
   const today = new Date().setHours(0, 0, 0, 0);
   let totalHarvest = 0;
   let todaysHarvest = 0;
@@ -223,7 +222,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
     const lastThreePayrolls = recentPayrollData.slice(0, 3);
 
     const payrollToTodayData = await getPayrollToTodayData({
-      farmId: "65d703cf9a00b1a671609458", //TODO: replace with farmId from request
+      farmId: farmId,
       seasonData: seasonData,
     });
 
@@ -237,6 +236,7 @@ const getBySeasonId = async (req: Request, res: Response) => {
         currency: seasonData?.currency,
         price: seasonData?.price,
         endDate: seasonData?.endDate,
+        payrollTimeframe: seasonData?.payrollTimeframe,
       },
       totals: {
         totalHarvest,

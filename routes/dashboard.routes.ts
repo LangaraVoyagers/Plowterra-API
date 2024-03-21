@@ -4,7 +4,7 @@ import paths from "../shared/paths";
 
 const dashboardRouter = express.Router();
 
-// GET: /api/v1/dashboard/:id
+// GET: /api/v1/indicators/season/:id
 dashboardRouter.get(`${paths.dashboard}/:id`, harvestController.getBySeasonId);
 
 export default dashboardRouter;
