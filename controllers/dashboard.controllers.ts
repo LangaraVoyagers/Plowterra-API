@@ -100,10 +100,11 @@ type ProductionRequest = {
 const getPayrollToTodayData = async (payload: ProductionRequest) => {
   try {
     const { farmId, seasonData } = payload;
-
+    const payrollTimeframe = seasonData?.payrollTimeframe;
     const endDate = Date.now();
     let startDate;
     let grossAmount = 0;
+    const oneDay = 24 * 60 * 60 * 1000;
 
     const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
 
@@ -111,6 +112,15 @@ const getPayrollToTodayData = async (payload: ProductionRequest) => {
       startDate = seasonData?.startDate;
     } else {
       startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
+    }
+
+    let daysRemaining = 0;
+    if (payrollTimeframe === "WEEKLY") {
+      daysRemaining = Math.floor(7 - (endDate - startDate) / oneDay);
+    } else if (payrollTimeframe === "BIWEEKLY") {
+      daysRemaining = Math.floor(14 - (endDate - startDate) / oneDay);
+    } else if (payrollTimeframe === "MONTHLY") {
+      daysRemaining = Math.floor(30 - (endDate - startDate) / oneDay);
     }
 
     const data = await HarvestLog.find({
@@ -128,7 +138,9 @@ const getPayrollToTodayData = async (payload: ProductionRequest) => {
     });
 
     return {
+      startDate,
       grossAmount,
+      daysRemaining,
     };
   } catch (error) {
     throw error;
@@ -197,6 +209,7 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
 
     const previousHarvestData =
       await getPreviousHarvestData(previousSeasonData);
+    // console.log(previousHarvestData);
 
     const previousUniqueDaysSet = new Set();
     let previousCreatedAt;
@@ -210,6 +223,14 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
     const previousHarvestDays = previousUniqueDaysSet.size;
     previousAverageHarvest = previousTotalHarvest / previousHarvestDays;
 
+    let aveHarvestChange =
+      ((averageHarvest - previousAverageHarvest) / previousAverageHarvest) *
+      100;
+
+    // console.log(previousTotalHarvest);
+
+    // console.log(averageHarvest, previousAverageHarvest, aveHarvestChange);
+
     const previousPayrollData =
       await getPreviousPayrollData(previousSeasonData);
     previousPayrollData.forEach((payroll: any) => {
@@ -217,6 +238,12 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
     });
 
     const previousAveragePayroll = previousTotalPayroll / previousHarvestDays;
+
+    let avePayrollChange =
+      ((averagePayroll - previousAveragePayroll) / previousAveragePayroll) *
+      100;
+
+    // console.log(averagePayroll, previousAveragePayroll, avePayrollChange);
 
     const recentPayrollData = await getRecentPayrollData(seasonData);
     const lastThreePayrolls = recentPayrollData.slice(0, 3);
@@ -246,10 +273,8 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
         totalDeductions,
       },
       averages: {
-        averageHarvest,
-        averagePayroll,
-        previousAverageHarvest,
-        previousAveragePayroll,
+        avePayrollChange,
+        aveHarvestChange,
       },
       lastPayrolls: lastThreePayrolls,
       payrollToTodayData,
