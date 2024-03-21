@@ -209,7 +209,6 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
 
     const previousHarvestData =
       await getPreviousHarvestData(previousSeasonData);
-    // console.log(previousHarvestData);
 
     const previousUniqueDaysSet = new Set();
     let previousCreatedAt;
@@ -227,10 +226,6 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
       ((averageHarvest - previousAverageHarvest) / previousAverageHarvest) *
       100;
 
-    // console.log(previousTotalHarvest);
-
-    // console.log(averageHarvest, previousAverageHarvest, aveHarvestChange);
-
     const previousPayrollData =
       await getPreviousPayrollData(previousSeasonData);
     previousPayrollData.forEach((payroll: any) => {
@@ -242,8 +237,6 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
     let avePayrollChange =
       ((averagePayroll - previousAveragePayroll) / previousAveragePayroll) *
       100;
-
-    // console.log(averagePayroll, previousAveragePayroll, avePayrollChange);
 
     const recentPayrollData = await getRecentPayrollData(seasonData);
     const lastThreePayrolls = recentPayrollData.slice(0, 3);
@@ -295,8 +288,65 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
   }
 };
 
+// you have to return an array like this:
+
+// [
+// {
+// // This is the minimum you need
+// -------------------------------------
+//    date: 'YYYY-MM-DD', -> already formatted, not timestamp
+//    collectedAmount: 300,
+// --------------------------------------
+// // Then you can add some other information to be displayed in the popup, for example:
+//    pickersCount,
+//    netPayment, <- if there is data available from the payrolls
+//    grossPayment, <- the collectedAmount * seasonPrice
+// }
+// ]
+
+// The idea is that the dates won't be duplicated, each item in the list will be a different date, and you have to group the information based on that
+
+const getHarvestGraphBySId = async (req: Request, res: Response) => {
+  const seasonId = req.params.id;
+
+  try {
+    const harvestData = await getHarvestData(seasonId);
+
+    const consolidatedData: { [date: string]: number } = {};
+    harvestData.forEach((harvestLog: any) => {
+      const date = new Date(harvestLog.createdAt).toISOString().split("T")[0];
+      if (consolidatedData[date]) {
+        consolidatedData[date] += harvestLog.collectedAmount;
+      } else {
+        consolidatedData[date] = harvestLog.collectedAmount;
+      }
+    });
+
+    const data = Object.keys(consolidatedData).map((date) => {
+      return {
+        date,
+        collectedAmount: consolidatedData[date],
+      };
+    });
+
+    return res.status(200).json({
+      data,
+      error: false,
+      message: message.get("success"),
+    });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({
+      data: null,
+      error: true,
+      message: message.get("error"),
+    });
+  }
+};
+
 const dashboardController = {
   getIndicatorsBySId,
+  getHarvestGraphBySId,
 };
 
 export default dashboardController;

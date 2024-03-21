@@ -11,9 +11,9 @@ dashboardRouter.get(
 );
 
 // GET: /api/v1/dashboard/harvest-graph/:id
-// dashboardRouter.get(
-//   `${paths.dashboard}/harvest-graph/:id`,
-//   harvestController.getHarvestGraphBySId
-// );
+dashboardRouter.get(
+  `${paths.dashboard}/harvest-graph/:id`,
+  harvestController.getHarvestGraphBySId
+);
 
 export default dashboardRouter;
