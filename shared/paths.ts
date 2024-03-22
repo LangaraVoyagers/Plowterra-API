@@ -8,4 +8,5 @@ export default {
   unit: "/units",
   currency: "/currencies",
   farm: "/farms",
+  dashboard: "/dashboard",
 };
