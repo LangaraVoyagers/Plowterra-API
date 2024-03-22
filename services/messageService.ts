@@ -56,9 +56,6 @@ export const createSMSpayroll = async (
   try {
     for (let index = 0; index < phoneSMS.length; index++) {
       if (phoneSMS[index] === "16724726022") {
-        console.log(
-          `Hi ${nameSMS[index]}, your payment for this payroll is ${currencySMS} ${netAmountSMS[index]} for a total collection of ${collectedAmountSMS[index]} ${unitSMS[index]} of ${productSMS}.`
-        );
         const message = await client.messages.create({
           body: `Hi ${nameSMS[index]}, your payment for this payroll is ${currencySMS} ${netAmountSMS[index]} for a total collection of ${collectedAmountSMS[index]} ${unitSMS[index]} of ${productSMS}.`,
           from: "+16205914371",
