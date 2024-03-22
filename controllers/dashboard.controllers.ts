@@ -54,7 +54,7 @@ const getPreviousSeasonData = async (seasonData: any) => {
   try {
     return await SeasonSchema.findOne(
       {
-        status: "Closed",
+        status: "CLOSED",
         deletedAt: null,
         product: seasonData?.product,
         endDate: { $lt: seasonData?.startDate },
