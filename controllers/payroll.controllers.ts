@@ -271,7 +271,6 @@ async function create(req: Request, res: Response, next: NextFunction) {
         // Save payroll
         payroll.save({ session });
 
-        console.log({ lastPayroll });
         if (!lastPayroll) {
           const farmPayroll = new FarmPayroll({
             farm: farmId,
@@ -282,18 +281,21 @@ async function create(req: Request, res: Response, next: NextFunction) {
           const farmPayrollCreated = await farmPayroll.save({ session });
           console.log("Farm payroll created", farmPayrollCreated._id);
 
-          let nameSMS = payroll.details.map(
-            (detail) => (detail.picker as any).name
-          );
           let phoneSMS = payroll.details.map(
             (detail) => (detail.picker as any).phone
           );
+
+          let nameSMS = payroll.details.map(
+            (detail) => (detail.picker as any).name
+          );
+
           let netAmountSMS = payroll.details.map((detail) => detail.netAmount);
           let collectedAmountSMS = payroll.details.map(
             (detail) => detail.collectedAmount
           );
 
           let currencySMS = payroll.season.currency;
+
           let productSMS = payroll.season.product;
 
           let unitSMS: string[];
@@ -309,8 +311,8 @@ async function create(req: Request, res: Response, next: NextFunction) {
           createSMSpayroll(
             req,
             res,
-            nameSMS,
             phoneSMS,
+            nameSMS,
             netAmountSMS,
             collectedAmountSMS,
             currencySMS,
@@ -319,7 +321,6 @@ async function create(req: Request, res: Response, next: NextFunction) {
           );
         } else {
           // Update the last payroll of the farm by season
-
           const farmPayrollUpdated = await FarmPayroll.findOneAndUpdate(
             { farm: farmId, season: season.id },
             {
