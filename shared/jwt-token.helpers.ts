@@ -11,7 +11,7 @@ const generateToken = (
 };
 
 const decodeToken = (token: string) => {
-  return jwt.decode(token);
+  return jwt.decode(token) as any;
 };
 
 const verifyToken = (token: string) => {

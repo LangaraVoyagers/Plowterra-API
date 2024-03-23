@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { generateToken, verifyToken } from "../shared/jwt-token.helpers";
+import {
+  decodeToken,
+  generateToken,
+  verifyToken,
+} from "../shared/jwt-token.helpers";
 
 import bcrypt from "bcrypt";
 import userMessage from "../messages/user.messages";
@@ -172,6 +176,7 @@ async function signIn(req: Request, res: Response) {
         token: updatedUser?.token,
         user: {
           name: user.name,
+          exp: decodeToken(token)?.exp,
           farm: user.farm,
         },
       },
