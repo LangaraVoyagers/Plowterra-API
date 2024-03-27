@@ -25,12 +25,22 @@ const getSeasonData = async (seasonId: any) => {
   }
 };
 
-const getHarvestData = async (seasonId: any) => {
+const getHarvestData = async (seasonId: any, fromDate: any, toDate: any) => {
+  let createdAtFilter = {};
+
+  if (fromDate && !toDate) {
+    createdAtFilter = { createdAt: { $gte: fromDate } };
+  } else if (!fromDate && toDate) {
+    createdAtFilter = { createdAt: { $lte: toDate } };
+  } else if (fromDate && toDate) {
+    createdAtFilter = { createdAt: { $gte: fromDate, $lte: toDate } };
+  }
+
   try {
     return await HarvestLog.find({
-      deletedAt: null,
-      season: seasonId,
+      $and: [createdAtFilter, { deletedAt: null }, { season: seasonId }],
     })
+      .select("+createdAt")
       .populate(POPULATE_HARVEST_LOG)
       .exec();
   } catch (error) {
@@ -177,7 +187,7 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
   try {
     const seasonData = await getSeasonData(seasonId);
 
-    const harvestData = await getHarvestData(seasonId);
+    const harvestData = await getHarvestData(seasonId, undefined, undefined);
 
     const uniqueDaysSet = new Set();
     let createdAt;
@@ -290,9 +300,11 @@ const getIndicatorsBySId = async (req: Request, res: Response) => {
 
 const getHarvestGraphBySId = async (req: Request, res: Response) => {
   const seasonId = req.params.id;
+  const fromDate = req.query.fromDate ?? undefined;
+  const toDate = req.query.toDate ?? undefined;
 
   try {
-    const harvestData = await getHarvestData(seasonId);
+    const harvestData = await getHarvestData(seasonId, fromDate, toDate);
 
     const consolidatedData: { [date: string]: number } = {};
     harvestData.forEach((harvestLog: any) => {

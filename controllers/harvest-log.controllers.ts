@@ -179,25 +179,25 @@ const create = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    // 14 * 24 * 60 * 60 * 1000
-    const TWO_WEEKS = 1209600000;
-
     const settled = req.query.settled ?? undefined;
     const seasonId = req.query.seasonId ?? undefined;
     const pickerId = req.query.pickerId ?? undefined;
-    const fromDate =
-      req.query.fromDate ??
-      new Date(new Date().toLocaleDateString()).getTime() - TWO_WEEKS;
-    const toDate = req.query.toDate ?? new Date().getTime();
+    const fromDate = req.query.fromDate ?? undefined;
+    const toDate = req.query.toDate ?? undefined;
+
+    let createdAtFilter = {};
+
+    if (fromDate && !toDate) {
+      createdAtFilter = { createdAt: { $gte: fromDate } };
+    } else if (!fromDate && toDate) {
+      createdAtFilter = { createdAt: { $lte: toDate } };
+    } else if (fromDate && toDate) {
+      createdAtFilter = { createdAt: { $gte: fromDate, $lte: toDate } };
+    }
 
     const harvestLogs = await HarvestLog.find({
       $and: [
-        {
-          createdAt: {
-            $gte: fromDate,
-            $lte: toDate,
-          },
-        },
+        createdAtFilter,
         { deletedAt: null },
         { parentId: null },
         ...(settled ? [{ settled }] : []),
