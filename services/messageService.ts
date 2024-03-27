@@ -30,7 +30,16 @@ export const createSMSlog = async (
   currency: string
 ) => {
   try {
-    if (pickerPhone === "16724726022") {
+    if (
+      pickerPhone === "16724726022" ||
+      pickerPhone === "16723384114" ||
+      pickerPhone === "16722720083" ||
+      pickerPhone === "12368632684" ||
+      pickerPhone === "17788660539" ||
+      pickerPhone === "16047248728" ||
+      pickerPhone === "12369656249" ||
+      pickerPhone === "17788586742"
+    ) {
       const message = await client.messages.create({
         body: `Hi ${pickerName}, you have collected ${netAmount} ${unit.toLowerCase()} of ${product.toLowerCase()}. That means you've earned ${currency} ${payment} for your next paycheck.`,
         from: "+16205914371",
@@ -55,7 +64,16 @@ export const createSMSpayroll = async (
 ) => {
   try {
     for (let index = 0; index < phoneSMS.length; index++) {
-      if (phoneSMS[index] === "16724726022") {
+      if (
+        phoneSMS[index] === "16724726022" ||
+        phoneSMS[index] === "16723384114" ||
+        phoneSMS[index] === "16722720083" ||
+        phoneSMS[index] === "12368632684" ||
+        phoneSMS[index] === "17788660539" ||
+        phoneSMS[index] === "16047248728" ||
+        phoneSMS[index] === "12369656249" ||
+        phoneSMS[index] === "17788586742"
+      ) {
         const message = await client.messages.create({
           body: `Hi ${nameSMS[index]}, your payment for this payroll is ${currencySMS} ${netAmountSMS[index]} for a total collection of ${collectedAmountSMS[index]} ${unitSMS[index]} of ${productSMS}.`,
           from: "+16205914371",
