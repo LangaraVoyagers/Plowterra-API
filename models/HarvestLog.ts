@@ -44,10 +44,10 @@ const HarvestLogSchema = new Schema<IHarvestLogSchema>({
   },
   collectedAmount: {
     type: Number,
-    required: [true, harvestLogMessage.COLLECTED_AMOUNT_GREATER_THAN_ZERO],
+    required: [true, harvestLogMessage.COLLECTED_AMOUNT_DIFFERENT_THAN_ZERO],
     validate: {
-      validator: (collectedAmount: number) => collectedAmount > 0,
-      message: harvestLogMessage.COLLECTED_AMOUNT_GREATER_THAN_ZERO,
+      validator: (collectedAmount: number) => collectedAmount !== 0,
+      message: harvestLogMessage.COLLECTED_AMOUNT_DIFFERENT_THAN_ZERO,
     },
   },
   seasonDeductions: {

@@ -13,8 +13,8 @@ const harvestLogMessage = {
   INVALID_PICKER_ID: "Please, provide a valid picker Id",
   INVALID_SEASON_DEDUCTION_ID: "Please, provide valid season deduction Ids",
   COLLECTED_AMOUNT_NUMBER_ERROR: "Collected amount needs to be a valid number",
-  COLLECTED_AMOUNT_GREATER_THAN_ZERO:
-    "Collected amount needs to be greater than zero",
+  COLLECTED_AMOUNT_DIFFERENT_THAN_ZERO:
+    "Collected amount needs to be different than zero",
   ERROR: "Some error occurred, try again later",
   SUCCESS: "Found record",
   NOT_FOUND: "No record was found",
