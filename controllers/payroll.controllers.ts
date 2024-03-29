@@ -382,7 +382,14 @@ async function create(req: Request, res: Response, next: NextFunction) {
 }
 
 function getAll(req: Request, res: Response, next: NextFunction) {
-  Payroll.find({})
+  const seasonId = req.query.seasonId ?? undefined;
+
+  Payroll.find({
+    $and: [
+      { deletedAt: null },
+      ...(seasonId ? [{ "season.id": seasonId }] : []),
+    ],
+  })
     .select("+createdAt")
     .exec()
     .then((data) => {
@@ -390,7 +397,8 @@ function getAll(req: Request, res: Response, next: NextFunction) {
         .status(200)
         .json({ data, error: false, message: message.get("success") });
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log({ error });
       res.status(500).json({
         data: null,
         error: true,
