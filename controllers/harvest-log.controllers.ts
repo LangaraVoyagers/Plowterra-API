@@ -205,7 +205,7 @@ const getAll = async (req: Request, res: Response) => {
         ...(pickerId ? [{ picker: pickerId }] : []),
       ],
     })
-      // .sort({ createdAt: "desc" })
+      .sort({ createdAt: "desc" })
       .select("+createdAt")
       .populate(populateQuery)
       .exec();
