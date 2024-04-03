@@ -269,7 +269,7 @@ async function create(req: Request, res: Response, next: NextFunction) {
           details: details,
         });
         // Save payroll
-        payroll.save({ session });
+        await payroll.save({ session });
 
         if (!lastPayroll) {
           const farmPayroll = new FarmPayroll({
@@ -280,45 +280,6 @@ async function create(req: Request, res: Response, next: NextFunction) {
           });
           const farmPayrollCreated = await farmPayroll.save({ session });
           console.log("Farm payroll created", farmPayrollCreated._id);
-
-          let phoneSMS = payroll.details.map(
-            (detail) => (detail.picker as any).phone
-          );
-
-          let nameSMS = payroll.details.map(
-            (detail) => (detail.picker as any).name
-          );
-
-          let netAmountSMS = payroll.details.map((detail) => detail.netAmount);
-          let collectedAmountSMS = payroll.details.map(
-            (detail) => detail.collectedAmount
-          );
-
-          let currencySMS = payroll.season.currency;
-
-          let productSMS = payroll.season.product;
-
-          let unitSMS: string[];
-          unitSMS = collectedAmountSMS.map((amount) => {
-            if (amount > 1) {
-              let unitUser = (payroll.season as any).unit;
-              return pluralize(unitUser);
-            } else {
-              return (payroll.season as any).unit;
-            }
-          });
-
-          createSMSpayroll(
-            req,
-            res,
-            phoneSMS,
-            nameSMS,
-            netAmountSMS,
-            collectedAmountSMS,
-            currencySMS,
-            productSMS,
-            unitSMS
-          );
         } else {
           // Update the last payroll of the farm by season
           const farmPayrollUpdated = await FarmPayroll.findOneAndUpdate(
@@ -358,6 +319,42 @@ async function create(req: Request, res: Response, next: NextFunction) {
           error: false,
           message: message.create("success"),
         });
+        let phoneSMS = payroll.details.map(
+          (detail) => (detail.picker as any).phone
+        );
+
+        let nameSMS = payroll.details.map(
+          (detail) => (detail.picker as any).name
+        );
+
+        let netAmountSMS = payroll.details.map((detail) => detail.netAmount);
+        let collectedAmountSMS = payroll.details.map(
+          (detail) => detail.collectedAmount
+        );
+
+        let currencySMS = payroll.season.currency;
+
+        let productSMS = payroll.season.product;
+
+        let unitSMS = collectedAmountSMS.map((amount) => {
+          if (amount > 1) {
+            let unitUser = (payroll.season as any).unit;
+            return pluralize(unitUser);
+          } else {
+            return (payroll.season as any).unit;
+          }
+        });
+        createSMSpayroll(
+          req,
+          res,
+          phoneSMS,
+          nameSMS,
+          netAmountSMS,
+          collectedAmountSMS,
+          currencySMS,
+          productSMS,
+          unitSMS
+        );
       } catch (error) {
         console.log({ error });
         console.error("abort transaction");
