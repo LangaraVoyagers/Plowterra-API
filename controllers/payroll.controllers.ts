@@ -43,7 +43,7 @@ async function getProductionData(payload: ProductionRequest) {
       if (!lastPayroll) {
         startDate = season?.startDate;
       } else {
-        startDate = lastPayroll?.nextEstimatedPayroll?.startDate;
+        startDate = lastPayroll?.nextEstimatedPayroll?.endDate;
       }
     }
 
