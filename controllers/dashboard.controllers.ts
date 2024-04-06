@@ -41,6 +41,7 @@ const getHarvestData = async (seasonId: any, fromDate: any, toDate: any) => {
       $and: [createdAtFilter, { deletedAt: null }, { season: seasonId }],
     })
       .select("+createdAt")
+      .sort({ createdAt: "asc" })
       .populate(POPULATE_HARVEST_LOG)
       .exec();
   } catch (error) {
@@ -316,14 +317,12 @@ const getHarvestGraphBySId = async (req: Request, res: Response) => {
       }
     });
 
-    const data = Object.keys(consolidatedData)
-      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-      .map((date) => {
-        return {
-          date,
-          collectedAmount: consolidatedData[date],
-        };
-      });
+    const data = Object.keys(consolidatedData).map((date) => {
+      return {
+        date,
+        collectedAmount: consolidatedData[date],
+      };
+    });
 
     return res.status(200).json({
       data,
