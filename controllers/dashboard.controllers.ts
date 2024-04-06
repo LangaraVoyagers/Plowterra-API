@@ -41,6 +41,7 @@ const getHarvestData = async (seasonId: any, fromDate: any, toDate: any) => {
       $and: [createdAtFilter, { deletedAt: null }, { season: seasonId }],
     })
       .select("+createdAt")
+      .sort({ createdAt: "asc" })
       .populate(POPULATE_HARVEST_LOG)
       .exec();
   } catch (error) {
