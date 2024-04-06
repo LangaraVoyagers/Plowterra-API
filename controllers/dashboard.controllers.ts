@@ -117,7 +117,10 @@ const getPayrollToTodayData = async (payload: ProductionRequest) => {
     let grossAmount = 0;
     const oneDay = 24 * 60 * 60 * 1000;
 
-    const lastPayroll = await FarmPayroll.findOne({ farm: farmId });
+    const lastPayroll = await FarmPayroll.findOne({
+      farm: farmId,
+      season: seasonData._id,
+    });
 
     if (!lastPayroll) {
       startDate = seasonData?.startDate;
@@ -133,7 +136,6 @@ const getPayrollToTodayData = async (payload: ProductionRequest) => {
     } else if (payrollTimeframe === "MONTHLY") {
       daysRemaining = Math.floor(30 - (endDate - startDate) / oneDay);
     }
-
     const data = await HarvestLog.find({
       deletedAt: null,
       season: seasonData?._id,
