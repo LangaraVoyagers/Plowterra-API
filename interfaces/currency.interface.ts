@@ -1,5 +1,5 @@
 import { IAuditSchema } from "./shared.interface";
 
-export interface ICurrency extends IAuditSchema {
+export interface ICurrencySchema extends IAuditSchema {
   name: string;
 }

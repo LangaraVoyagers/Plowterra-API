@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import { IAuditSchema } from "../interfaces/shared.interface";
-import { AuditSchema } from "./Audit";
 import { IProductSchema } from "../interfaces/product.interface";
+import { AuditSchema } from "./Audit";
 
 const ProductSchema: Schema = new Schema({
   name: { type: String, required: true, maxlength: 40 },

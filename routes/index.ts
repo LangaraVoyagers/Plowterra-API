@@ -1,7 +1,9 @@
+import express from "express";
 import authenticationRouter from "./authentication.routes";
 import currencyRouter from "./currency.routes";
+import dashboardRouter from "./dashboard.routes";
 import deductionsRouter from "./deductions.routes";
-import express from "express";
+import farmRouter from "./farm.routes";
 import harvestLogRouter from "./harvest-logs.routes";
 import payrollRouter from "./payrolls.routes";
 import pickersRouter from "./pickers.routes";
@@ -11,14 +13,16 @@ import unitRouter from "./unit.routes";
 
 const router = express.Router({ mergeParams: true });
 
-router.use(authenticationRouter)
+router.use(authenticationRouter);
 router.use(deductionsRouter);
-router.use(harvestLogRouter)
+router.use(harvestLogRouter);
 router.use(payrollRouter);
 router.use(productsRouter);
 router.use(pickersRouter);
 router.use(unitRouter);
 router.use(seasonRouter);
 router.use(currencyRouter);
+router.use(farmRouter);
+router.use(dashboardRouter);
 
 export default router;

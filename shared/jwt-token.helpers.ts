@@ -1,5 +1,5 @@
-import { IUserSchema } from "../interfaces/user.interface";
 import jwt from "jsonwebtoken";
+import { IUserSchema } from "../interfaces/user.interface";
 import userMessage from "../messages/user.messages";
 
 const generateToken = (
@@ -11,7 +11,7 @@ const generateToken = (
 };
 
 const decodeToken = (token: string) => {
-  return jwt.decode(token);
+  return jwt.decode(token) as any;
 };
 
 const verifyToken = (token: string) => {
@@ -50,4 +50,4 @@ const verifyToken = (token: string) => {
   }
 };
 
-export { generateToken, decodeToken, verifyToken };
+export { decodeToken, generateToken, verifyToken };

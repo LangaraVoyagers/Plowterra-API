@@ -1,7 +1,7 @@
-import { NextFunction, Response, Request } from "express";
+import { NextFunction, Request, Response } from "express";
 import Currency from "../models/Currency";
-import getContentLocation from "../shared/get-content-location";
 import Message from "../shared/Message";
+import getContentLocation from "../shared/get-content-location";
 
 const message = new Message("currency");
 

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import Picker from "../models/Picker";
 import Message from "../shared/Message";
 import getContentLocation from "../shared/get-content-location";
@@ -66,6 +67,7 @@ export function getPicker(req: Request, res: Response) {
 
 export function getAllPickers(req: Request, res: Response) {
   Picker.find({ deletedAt: null })
+    .select("+createdAt")
     .sort({ createdAt: "desc" })
     .then((data) => {
       res.status(200).json({
@@ -111,37 +113,48 @@ export function updatePicker(req: Request, res: Response) {
     });
 }
 
-export function softDeletePicker(req: Request, res: Response) {
-  const id = req?.params?.id;
+export async function softDeletePicker(req: Request, res: Response) {
+  try {
+    const id = req?.params?.id;
+    const picker = await Picker.findById(id).exec();
+    const hasHarvestLog = (picker as any)?.populateHasHarvestLog();
 
-  Picker.findOneAndUpdate(
-    { _id: id, deletedAt: null },
-    {
-      deletedAt: new Date().getTime(),
-      deletedBy: "",
-    },
-    {
-      returnDocument: "after",
-    }
-  )
-    .then((data) => {
-      if (!data) {
-        return res
-          .status(404)
-          .json({ data, error: true, message: message.get("not_found") });
-      }
-
-      res.status(200).json({
-        data,
-        error: false,
-        message: message.delete("success"),
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
+    if (hasHarvestLog) {
+      return res.status(200).json({
         data: null,
         error: true,
-        message: message.delete("error"),
+        // TODO: add some custom message from imports
+        message: "Picker cannot be deleted as there are already Harvest Logs",
       });
+    }
+
+    const updatedPicker = await Picker.findOneAndUpdate(
+      { _id: id, deletedAt: null },
+      {
+        deletedAt: new Date().getTime(),
+        deletedBy: "",
+      },
+      {
+        returnDocument: "after",
+      }
+    ).exec();
+
+    if (!updatedPicker) {
+      return res
+        .status(404)
+        .json({ data: null, error: true, message: message.get("not_found") });
+    }
+
+    res.status(200).json({
+      data: updatePicker,
+      error: false,
+      message: message.delete("success"),
     });
+  } catch (error) {
+    res.status(500).json({
+      data: null,
+      error: true,
+      message: message.delete("error"),
+    });
+  }
 }

@@ -1,11 +1,10 @@
-import { Response, Request } from "express";
+import { Request, Response } from "express";
 import Unit from "../models/Unit";
-import getContentLocation from "../shared/get-content-location";
 import Message from "../shared/Message";
+import getContentLocation from "../shared/get-content-location";
 
 const message = new Message("unit");
 
-// POST: /api/v1/units
 export function createUnit(req: Request, res: Response) {
   const unit = new Unit({
     name: req?.body?.name,
@@ -34,7 +33,6 @@ export function createUnit(req: Request, res: Response) {
     });
 }
 
-// GET: /api/v1/units
 export function getAllUnit(req: Request, res: Response) {
   Unit.find({ deletedAt: null })
     .exec()
@@ -54,7 +52,6 @@ export function getAllUnit(req: Request, res: Response) {
     });
 }
 
-// GET: /api/v1/units/:id
 export function getUnit(req: Request, res: Response) {
   const id = req?.params?.id;
 
@@ -82,7 +79,6 @@ export function getUnit(req: Request, res: Response) {
     });
 }
 
-// DELETE: /api/v1/units/:id
 export function deleteUnit(req: Request, res: Response) {
   const id = req?.params?.id;
 

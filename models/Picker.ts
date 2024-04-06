@@ -1,21 +1,23 @@
-import mongoose, { Schema } from 'mongoose';
-import { IAuditSchema } from "../interfaces/shared.interface";
-import { AuditSchema } from "./Audit";
+import mongoose, { Schema } from "mongoose";
 import {
   BloodType,
-  IPicker,
+  ICreatePickerRequest,
   IPickerContact,
   Relationship,
-} from "project-2-types/lib/pickers";
+} from "project-2-types/dist/interface";
 
-export interface IPickerSchema extends IAuditSchema, IPicker {}
+import { IAuditSchema } from "../interfaces/shared.interface";
+import { AuditSchema } from "./Audit";
+import HarvestLog from "./HarvestLog";
+
+export interface IPickerSchema extends IAuditSchema, ICreatePickerRequest {}
 
 const PickerSchema: Schema = new Schema<IPickerSchema>({
   name: { type: String, required: true, maxlength: 40 },
-  phone: { type: String, required: true, maxlength: 15 },
+  phone: { type: String, required: true, maxlength: 30 },
   emergencyContact: new Schema<IPickerContact>({
     name: { type: String, required: true, maxlength: 40 },
-    phone: { type: String, required: true, maxlength: 15 },
+    phone: { type: String, required: true, maxlength: 30 },
     relationship: {
       type: String,
       enum: Object.keys(Relationship),
@@ -32,6 +34,17 @@ const PickerSchema: Schema = new Schema<IPickerSchema>({
   },
   ...AuditSchema,
 });
+
+PickerSchema.methods.populateHasHarvestLog = async function () {
+  const picker = this.toJSON();
+  const harvestLog = await HarvestLog.findOne({
+    picker: this._id,
+    deletedAt: null,
+  });
+
+  picker.hasHarvestLog = !!harvestLog;
+  return picker;
+};
 
 const Picker = mongoose.model<IPickerSchema>("Picker", PickerSchema);
 
