@@ -182,8 +182,8 @@ const getAll = async (req: Request, res: Response) => {
     const settled = req.query.settled ?? undefined;
     const seasonId = req.query.seasonId ?? undefined;
     const pickerId = req.query.pickerId ?? undefined;
-    const fromDate = req.query.fromDate ?? undefined;
-    const toDate = req.query.toDate ?? undefined;
+    const fromDate = req.query.startDate ?? undefined;
+    const toDate = req.query.endDate ?? undefined;
 
     let createdAtFilter = {};
 
