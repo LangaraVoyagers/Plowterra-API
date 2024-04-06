@@ -316,12 +316,14 @@ const getHarvestGraphBySId = async (req: Request, res: Response) => {
       }
     });
 
-    const data = Object.keys(consolidatedData).map((date) => {
-      return {
-        date,
-        collectedAmount: consolidatedData[date],
-      };
-    });
+    const data = Object.keys(consolidatedData)
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+      .map((date) => {
+        return {
+          date,
+          collectedAmount: consolidatedData[date],
+        };
+      });
 
     return res.status(200).json({
       data,
