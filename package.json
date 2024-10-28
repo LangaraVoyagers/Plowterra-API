@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon app.ts",
     "build": "npx tsc",
-    "start": "node dist/nodejs/app.js",
+    "start": "node dist/app.js",
     "lint": "npx prettier --write .",
     "postbuild": "cp -R serverless.yaml node_modules dist",
     "prepare": "husky install"
