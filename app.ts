@@ -18,13 +18,14 @@ const app: Application = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// authorization middleware
-app.use(authUser);
-app.use("/api/v1", router);
 
 app.get("/hello", (req: Request, res: Response) => {
   res.json({ message: "Hi from team Voyagers" });
 });
+
+// authorization middleware
+app.use(authUser);
+app.use("/api/v1", router);
 
 const listener = app.listen(port, () => {
   const { port } = listener.address() as AddressInfo;
