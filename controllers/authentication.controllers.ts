@@ -5,7 +5,7 @@ import {
   verifyToken,
 } from "../shared/jwt-token.helpers";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import userMessage from "../messages/user.messages";
 import Farm from "../models/Farm";
 import User from "../models/User";
