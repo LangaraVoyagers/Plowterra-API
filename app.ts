@@ -5,7 +5,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { AddressInfo } from "net";
 import serverless from "serverless-http";
-import authUser from "./middleware/authorization.middleware";
 import connect from "./models/db";
 import router from "./routes";
 
@@ -24,7 +23,7 @@ app.get("/hello", (req: Request, res: Response) => {
 });
 
 // authorization middleware
-app.use(authUser);
+// app.use(authUser);
 app.use("/api/v1", router);
 
 const listener = app.listen(port, () => {
