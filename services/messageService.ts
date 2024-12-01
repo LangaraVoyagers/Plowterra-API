@@ -10,10 +10,10 @@ try {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
 
   if (!accountSid || !authToken) {
-    throw new Error("Twilio account SID and auth token must be provided");
+    console.error("Twilio account SID and auth token must be provided");
+  } else {
+    client = twilio(accountSid, authToken);
   }
-
-  client = twilio(accountSid, authToken);
 } catch (error) {
   console.error("Error initializing Twilio client:", error);
 }

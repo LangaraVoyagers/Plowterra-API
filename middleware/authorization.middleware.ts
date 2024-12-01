@@ -15,7 +15,6 @@ async function authUser(req: Request, res: Response, next: NextFunction) {
 
   // ignore unsecured routes
   if (isIgnorePath) {
-    console.log();
     next();
     return;
   }
