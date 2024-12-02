@@ -29,13 +29,3 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
-
-      - name: serverless deploy --stage prod
-        if: github.ref == 'refs/heads/main'
-        uses: serverless/github-action@v3.2
-        with:
-          args: deploy --stage prod
-
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY }}

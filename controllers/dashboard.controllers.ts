@@ -117,9 +117,13 @@ const getPayrollToTodayData = async (payload: ProductionRequest) => {
     let grossAmount = 0;
     const oneDay = 24 * 60 * 60 * 1000;
 
+    if (!seasonData) {
+      throw new Error("Season not found");
+    }
+
     const lastPayroll = await FarmPayroll.findOne({
       farm: farmId,
-      season: seasonData._id,
+      season: seasonData?._id,
     });
 
     if (!lastPayroll) {
@@ -175,19 +179,23 @@ const getRecentPayrollData = async (seasonData: any) => {
 };
 
 const getIndicatorsBySId = async (req: Request, res: Response) => {
-  const seasonId = req.params.id;
-  const farmId = res.locals.user.farm._id;
-
-  const today = new Date().setHours(0, 0, 0, 0);
-  let totalHarvest = 0;
-  let todaysHarvest = 0;
-  let totalPayroll = 0;
-  let totalDeductions = 0;
-  let previousTotalHarvest = 0;
-  let previousTotalPayroll = 0;
-  let previousAverageHarvest = 0;
-
   try {
+    const seasonId = req.params.id;
+    const farmId = res?.locals?.user?.farm?._id;
+
+    if (!farmId) {
+      throw new Error("Farm not found");
+    }
+
+    const today = new Date().setHours(0, 0, 0, 0);
+    let totalHarvest = 0;
+    let todaysHarvest = 0;
+    let totalPayroll = 0;
+    let totalDeductions = 0;
+    let previousTotalHarvest = 0;
+    let previousTotalPayroll = 0;
+    let previousAverageHarvest = 0;
+
     const seasonData = await getSeasonData(seasonId);
 
     const harvestData = await getHarvestData(seasonId, undefined, undefined);
